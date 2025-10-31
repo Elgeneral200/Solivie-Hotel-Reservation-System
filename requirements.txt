@@ -1,0 +1,35 @@
+# Core Web Framework
+streamlit        # Main web application framework
+
+# Data Processing
+pandas          # Data manipulation and analysis
+numpy           # Numerical computing
+
+# Visualization
+plotly          # Interactive charts and graphs
+
+# Database
+sqlalchemy      # SQL toolkit and ORM
+
+# Security
+bcrypt          # Password hashing
+
+# Configuration
+python-dotenv       # Environment variable management
+python-decouple      # Configuration management
+
+# Image Processing
+pillow              # Image handling
+
+# PDF Generation
+reportlab           # PDF creation
+fpdf                # PDF generation
+
+# Validation
+email-validator      # Email validation
+
+# QR Code
+qrcode               # QR code generation
+
+# Email
+secure-smtplib      # Secure email sending
