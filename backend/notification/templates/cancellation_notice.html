@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background-color: #f44336; color: white; padding: 20px; text-align: center; }
+        .content { padding: 20px; background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Booking Cancelled</h1>
+        </div>
+        <div class="content">
+            <p>Dear {guest_name},</p>
+            <p>Your booking <strong>{booking_reference}</strong> has been cancelled.</p>
+            <p><strong>Refund Amount:</strong> ${refund_amount}</p>
+            <p>Refund will be processed within 5-7 business days.</p>
+            <p>We hope to serve you again in the future!</p>
+        </div>
+    </div>
+</body>
+</html>
