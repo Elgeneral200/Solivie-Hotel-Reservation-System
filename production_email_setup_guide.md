@@ -34,4 +34,4 @@ Before starting, make sure you have:
 3. Enter name: **"Solivie Hotel System"**
 4. Click "Generate"
 
-### 2C. SAVE THE PASSWORD!
+### 2C. SAVE THE PASSWORD
