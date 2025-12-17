@@ -1,6 +1,7 @@
 """
 Booking management page.
 View and manage all bookings.
+UPDATED: Added ID verification functionality
 """
 
 import streamlit as st
@@ -9,14 +10,19 @@ from database.db_manager import get_db_session
 from database.models import Booking, Room, User
 from utils.helpers import format_currency, format_datetime
 from utils.constants import BookingStatus
+from datetime import datetime
+
 
 st.set_page_config(page_title="Manage Bookings", page_icon="📋", layout="wide")
+
 
 if not st.session_state.get('is_admin', False):
     st.error("❌ Admin access required")
     st.stop()
 
+
 st.title("📋 Booking Management")
+
 
 # Filters
 col1, col2, col3 = st.columns(3)
@@ -27,6 +33,7 @@ with col2:
 with col3:
     if st.button("🔄 Refresh"):
         st.rerun()
+
 
 # Get bookings
 with get_db_session() as session:
@@ -43,7 +50,7 @@ with get_db_session() as session:
     
     bookings = query.all()
     
-    # ✅ FIX: Extract all data within the session
+    # Extract all data within the session
     bookings_data = []
     for booking in bookings:
         room = session.query(Room).filter_by(room_id=booking.room_id).first()
@@ -59,12 +66,23 @@ with get_db_session() as session:
             'num_guests': booking.num_guests,
             'total_amount': booking.total_amount,
             'special_requests': booking.special_requests,
+            # NEW: ID Verification fields
+            'guest_id_number': booking.guest_id_number,
+            'id_verified': booking.id_verified,
+            'verification_date': booking.verification_date,
+            # Room info
             'room_number': room.room_number if room else 'N/A',
             'room_type': room.room_type if room else 'N/A',
+            # User info
             'user_name': f"{user.first_name} {user.last_name}" if user else 'N/A',
             'user_email': user.email if user else 'N/A',
-            'user_phone': user.phone_number if user else 'N/A'
+            'user_phone': user.phone_number if user else 'N/A',
+            # NEW: User ID info
+            'user_national_id': user.national_id if user else None,
+            'user_passport': user.passport_number if user else None,
+            'user_nationality': user.nationality if user else 'N/A'
         })
+
 
 if not bookings_data:
     st.info("No bookings found")
@@ -72,38 +90,95 @@ else:
     st.success(f"Found {len(bookings_data)} booking(s)")
     
     for data in bookings_data:
-        with st.expander(f"📋 {data['reference']} - {data['status'].upper()}"):
+        # Create expander title with ID verification status
+        id_status = ""
+        if data['id_verified']:
+            id_status = " ✅ ID Verified"
+        elif data['status'] in ['confirmed', 'pending']:
+            id_status = " ⚠️ ID Not Verified"
+        
+        with st.expander(f"📋 {data['reference']} - {data['status'].upper()}{id_status}"):
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.write("**Booking Info**")
+                st.markdown("**📋 Booking Info**")
                 st.write(f"Reference: {data['reference']}")
                 st.write(f"Status: {data['status']}")
                 st.write(f"Created: {format_datetime(data['created_at'])}")
             
             with col2:
-                st.write("**Stay Details**")
+                st.markdown("**🏨 Stay Details**")
                 st.write(f"Room: {data['room_number']} ({data['room_type']})")
                 st.write(f"Check-in: {format_datetime(data['check_in'])}")
                 st.write(f"Check-out: {format_datetime(data['check_out'])}")
                 st.write(f"Guests: {data['num_guests']}")
             
             with col3:
-                st.write("**Customer**")
+                st.markdown("**👤 Customer**")
                 st.write(f"Name: {data['user_name']}")
                 st.write(f"Email: {data['user_email']}")
                 st.write(f"Phone: {data['user_phone']}")
                 st.write(f"**Total: {format_currency(data['total_amount'])}**")
             
+            st.markdown("---")
+            
+            # NEW: ID Verification Section
+            st.markdown("**🆔 Guest Identification**")
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.write("**ID on File:**")
+                if data['user_national_id']:
+                    st.write(f"National ID: {data['user_national_id']}")
+                elif data['user_passport']:
+                    st.write(f"Passport: {data['user_passport']}")
+                else:
+                    st.warning("No ID on file")
+            
+            with col2:
+                st.write("**Nationality:**")
+                st.write(data['user_nationality'])
+            
+            with col3:
+                st.write("**Verification Status:**")
+                if data['id_verified']:
+                    st.success("✅ Verified")
+                    if data['verification_date']:
+                        st.caption(f"On: {data['verification_date'].strftime('%Y-%m-%d %H:%M')}")
+                else:
+                    st.error("❌ Not Verified")
+            
+            with col4:
+                # Mark ID as Verified button
+                if not data['id_verified'] and data['status'] in ['confirmed', 'pending']:
+                    if st.button("✅ Mark ID Verified", key=f"verify_{data['booking_id']}", type="primary"):
+                        # Update booking to mark ID as verified
+                        with get_db_session() as session:
+                            booking = session.query(Booking).filter_by(booking_id=data['booking_id']).first()
+                            if booking:
+                                booking.id_verified = True
+                                booking.verification_date = datetime.now()
+                                if data['user_national_id']:
+                                    booking.guest_id_number = data['user_national_id']
+                                elif data['user_passport']:
+                                    booking.guest_id_number = data['user_passport']
+                                session.commit()
+                                st.success("✅ ID marked as verified!")
+                                st.rerun()
+            
+            st.markdown("---")
+            
             if data['special_requests']:
-                st.write(f"**Special Requests:** {data['special_requests']}")
+                st.info(f"**💬 Special Requests:** {data['special_requests']}")
             
             # Actions
             if data['status'] in ['pending', 'confirmed']:
-                if st.button("❌ Cancel", key=f"cancel_{data['booking_id']}"):
-                    success, refund, msg = BookingManager.cancel_booking(data['booking_id'])
-                    if success:
-                        st.success(msg)
-                        st.rerun()
-                    else:
-                        st.error(msg)
+                col_a, col_b, col_c = st.columns([2, 1, 1])
+                with col_b:
+                    if st.button("❌ Cancel Booking", key=f"cancel_{data['booking_id']}", use_container_width=True):
+                        success, refund, msg = BookingManager.cancel_booking(data['booking_id'])
+                        if success:
+                            st.success(msg)
+                            st.rerun()
+                        else:
+                            st.error(msg)

@@ -1,6 +1,7 @@
 """
 User authentication logic.
 Handles registration, login, password hashing, and verification.
+UPDATED: Added National ID/Passport handling
 """
 
 import bcrypt
@@ -23,8 +24,13 @@ class AuthenticationManager:
         return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
     
     @staticmethod
-    def register_user(email, password, first_name, last_name, phone_number):
-        """Register new customer account."""
+    def register_user(email, password, first_name, last_name, phone_number,
+                     national_id=None, passport_number=None, nationality=None,
+                     date_of_birth=None, id_expiry_date=None):
+        """
+        Register new customer account.
+        UPDATED: Now accepts ID information
+        """
         if not validate_email(email):
             return False, "Invalid email format"
         
@@ -37,12 +43,19 @@ class AuthenticationManager:
                 if existing:
                     return False, "Email already registered"
                 
+                # Create user with ID information
                 new_user = User(
                     email=email,
                     password_hash=AuthenticationManager.hash_password(password),
                     first_name=first_name,
                     last_name=last_name,
-                    phone_number=phone_number
+                    phone_number=phone_number,
+                    # NEW: ID fields
+                    national_id=national_id,
+                    passport_number=passport_number,
+                    nationality=nationality,
+                    date_of_birth=date_of_birth,
+                    id_expiry_date=id_expiry_date
                 )
                 session.add(new_user)
                 session.commit()

@@ -1,6 +1,7 @@
 """
 Configuration settings for the Hotel Reservation System.
 Centralizes all app settings, business rules, and constants.
+UPDATED: Enhanced email configuration for Feature 2
 """
 
 import os
@@ -23,27 +24,51 @@ SECRET_KEY = os.getenv("SECRET_KEY", "change-this-in-production")
 SESSION_TIMEOUT = 3600
 
 # Password requirements
-MIN_PASSWORD_LENGTH = 8  # ✅ ADDED THIS
+MIN_PASSWORD_LENGTH = 8
 REQUIRE_UPPERCASE = True
 REQUIRE_LOWERCASE = True
 REQUIRE_NUMBERS = True
 REQUIRE_SPECIAL_CHARS = False
 
 # ============================================================================
-# EMAIL
+# EMAIL CONFIGURATION ENHANCED
 # ============================================================================
+# Enable/disable email sending (useful for testing)
+EMAIL_ENABLED = os.getenv("EMAIL_ENABLED", "True").lower() == "true"
+
+# SMTP Server Settings
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
 EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
-EMAIL_USER = os.getenv("EMAIL_USER", "")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")
-EMAIL_FROM = os.getenv("EMAIL_FROM", "noreply@hotel.com")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+
+# Authentication
+EMAIL_USER = os.getenv("EMAIL_USER", "")  # Your Gmail address
+EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD", "")  # App password (not regular password!)
+
+# Sender Information
+EMAIL_FROM_NAME = os.getenv("EMAIL_FROM_NAME", "Solivie Hotel")
+EMAIL_FROM_ADDRESS = os.getenv("EMAIL_FROM", "noreply@solivie.com")
+EMAIL_REPLY_TO = os.getenv("EMAIL_REPLY_TO", "support@solivie.com")
+
+# Email Templates
+EMAIL_LOGO_URL = "https://your-hotel-logo-url.com/logo.png"  # Optional: Add your logo URL
+EMAIL_FOOTER_TEXT = "Thank you for choosing Solivie Hotel"
+EMAIL_SUPPORT_EMAIL = "support@solivie.com"
+EMAIL_SUPPORT_PHONE = "+1 234 567 8900"
+
+# Notification Settings
+SEND_BOOKING_CONFIRMATION = True
+SEND_PAYMENT_RECEIPT = True
+SEND_CANCELLATION_CONFIRMATION = True
+SEND_CHECK_IN_REMINDER = True
+CHECK_IN_REMINDER_HOURS = 24  # Send reminder 24h before check-in
 
 # ============================================================================
 # BUSINESS RULES
 # ============================================================================
 MIN_BOOKING_DAYS = 1
 MAX_BOOKING_DAYS = 30
-MAX_ADVANCE_BOOKING_DAYS = 365  # ✅ ADDED THIS
+MAX_ADVANCE_BOOKING_DAYS = 365
 CANCELLATION_HOURS = 24
 CANCELLATION_FEE_PERCENTAGE = 20
 LOYALTY_POINTS_RATE = 10
@@ -103,7 +128,8 @@ APP_VERSION = "1.0.0"
 COMPANY_NAME = "Solivie Hotel"
 COMPANY_ADDRESS = "123 Hotel Street, City, Country"
 COMPANY_PHONE = "+1 234 567 8900"
-ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@hotel.com")
+COMPANY_WEBSITE = "https://www.solivie.com"
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@solivie.com")
 CURRENCY_SYMBOL = "$"
 CURRENCY_CODE = "USD"
 DATE_FORMAT = "%Y-%m-%d"

@@ -7,3 +7,5 @@ venv/
 logs/
 uploads/
 .streamlit/
+*.db
+*.pyc

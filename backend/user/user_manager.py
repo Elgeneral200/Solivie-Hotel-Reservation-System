@@ -1,6 +1,7 @@
 """
 User profile management.
 Handles user data and profile updates.
+UPDATED: Added ID fields to user profile
 """
 
 from database.db_manager import get_db_session
@@ -16,6 +17,7 @@ class UserManager:
         """
         Get complete user profile.
         Returns a dictionary to avoid session issues.
+        UPDATED: Now includes ID information
         """
         try:
             with get_db_session() as session:
@@ -23,7 +25,7 @@ class UserManager:
                 if not user:
                     return None
                 
-                # ✅ FIX: Return dictionary instead of SQLAlchemy object
+                # Return dictionary instead of SQLAlchemy object
                 return {
                     'user_id': user.user_id,
                     'email': user.email,
@@ -33,6 +35,13 @@ class UserManager:
                     'address': user.address,
                     'city': user.city,
                     'country': user.country,
+                    # NEW: ID information
+                    'national_id': user.national_id,
+                    'passport_number': user.passport_number,
+                    'nationality': user.nationality,
+                    'date_of_birth': user.date_of_birth,
+                    'id_expiry_date': user.id_expiry_date,
+                    # Original fields
                     'loyalty_points': user.loyalty_points,
                     'account_status': user.account_status,
                     'created_at': user.created_at,
@@ -75,19 +84,19 @@ class UserManager:
     def get_user_statistics(user_id):
         """
         Get user booking statistics.
-        ✅ FIXED: Correctly counts active bookings (excluding cancelled)
+        FIXED: Correctly counts active bookings (excluding cancelled)
         """
         try:
             with get_db_session() as session:
                 user = session.query(User).filter_by(user_id=user_id).first()
                 all_bookings = session.query(Booking).filter_by(user_id=user_id).all()
                 
-                # ✅ FIX: Separate bookings by status
+                # FIX: Separate bookings by status
                 active_bookings = [b for b in all_bookings if b.booking_status in ['confirmed', 'pending']]
                 completed_bookings = [b for b in all_bookings if b.booking_status == 'completed']
                 cancelled_bookings = [b for b in all_bookings if b.booking_status == 'cancelled']
                 
-                # ✅ FIX: Total spent includes only confirmed and completed
+                # FIX: Total spent includes only confirmed and completed
                 total_spent = sum(b.total_amount for b in all_bookings if b.booking_status in ['confirmed', 'completed'])
                 
                 stats = {

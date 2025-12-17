@@ -1,24 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Cancelled</title>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background-color: #f44336; color: white; padding: 20px; text-align: center; }
-        .content { padding: 20px; background-color: #f9f9f9; }
+        body {{ 
+            font-family: Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }}
+        .container {{ 
+            max-width: 600px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }}
+        .header {{ 
+            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            color: white; 
+            padding: 30px; 
+            text-align: center;
+            border-radius: 8px 8px 0 0;
+        }}
+        .header h1 {{
+            margin: 0;
+            font-size: 28px;
+        }}
+        .content {{ 
+            padding: 30px; 
+            background-color: #ffffff;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }}
+        .content p {{
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+        }}
+        .cancellation-details {{ 
+            background-color: #fff3cd; 
+            padding: 20px; 
+            margin: 20px 0; 
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+        }}
+        .cancellation-details h2 {{
+            color: #856404;
+            margin-top: 0;
+            font-size: 20px;
+        }}
+        .cancellation-details table {{
+            width: 100%;
+            color: #333;
+        }}
+        .cancellation-details td {{
+            padding: 8px 0;
+        }}
+        .cancellation-details strong {{
+            color: #333;
+            font-weight: bold;
+        }}
+        .refund-amount {{
+            font-size: 18px;
+            color: #28a745;
+            font-weight: bold;
+        }}
+        .info-box {{
+            background-color: #e7f3ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 20px 0;
+            color: #0066cc;
+        }}
+        .footer {{ 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 12px; 
+            color: #999;
+            background-color: #f8f9fa;
+            border-radius: 0 0 8px 8px;
+        }}
+        .footer p {{
+            margin: 5px 0;
+        }}
+        .contact-info {{
+            margin: 15px 0;
+            color: #666;
+            font-size: 14px;
+        }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Booking Cancelled</h1>
+            <h1>🏨 {company_name}</h1>
         </div>
         <div class="content">
-            <p>Dear {guest_name},</p>
-            <p>Your booking <strong>{booking_reference}</strong> has been cancelled.</p>
-            <p><strong>Refund Amount:</strong> ${refund_amount}</p>
-            <p>Refund will be processed within 5-7 business days.</p>
-            <p>We hope to serve you again in the future!</p>
+            <h2 style="color: #333; margin-top: 0;">❌ Booking Cancelled</h2>
+            
+            <p>Dear <strong>{guest_name}</strong>,</p>
+            
+            <p>Your booking has been cancelled as requested.</p>
+            
+            <div class="cancellation-details">
+                <h2>📋 Cancellation Details</h2>
+                <table>
+                    <tr>
+                        <td><strong>Booking Reference:</strong></td>
+                        <td>{booking_reference}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cancellation Date:</strong></td>
+                        <td>{cancellation_date}</td>
+                    </tr>
+                    <tr style="border-top: 2px solid #ffc107;">
+                        <td style="padding-top: 12px;"><strong style="font-size: 18px;">Refund Amount:</strong></td>
+                        <td style="padding-top: 12px;" class="refund-amount">{refund_amount}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="info-box">
+                <p style="margin: 0;">💡 <strong>Note:</strong> The refund will be processed within 5-7 business days to your original payment method.</p>
+            </div>
+            
+            <p>We're sorry to see you cancel. We hope to serve you again in the future!</p>
+            
+            <div class="contact-info">
+                <p><strong>Questions? Contact us:</strong></p>
+                <p>📧 Email: {support_email}</p>
+                <p>📞 Phone: {support_phone}</p>
+            </div>
+        </div>
+        <div class="footer">
+            <p><strong>{company_name}</strong></p>
+            <p>{company_address}</p>
+            <p>{company_phone}</p>
+            <p style="margin-top: 15px;">&copy; 2025 {company_name}. All rights reserved.</p>
         </div>
     </div>
 </body>

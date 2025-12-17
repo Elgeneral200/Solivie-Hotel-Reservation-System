@@ -1,13 +1,15 @@
 """
 SQLAlchemy ORM models for all database tables.
 Defines User, Room, Booking, Payment, Review, AdminUser, PromoCode, and AuditLog.
+UPDATED: Added National ID and Check-in/Check-out fields
 """
 
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, Boolean, ForeignKey, JSON
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, Text, Boolean, ForeignKey, JSON, Date
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from datetime import datetime
 import config
+
 
 Base = declarative_base()
 
@@ -22,6 +24,14 @@ class User(Base):
     first_name = Column(String(100))
     last_name = Column(String(100))
     phone_number = Column(String(20))
+    
+    # NEW: National ID / Passport Information
+    national_id = Column(String(50))
+    passport_number = Column(String(50))
+    nationality = Column(String(50))
+    date_of_birth = Column(Date)
+    id_expiry_date = Column(Date)
+    
     address = Column(Text)
     city = Column(String(100))
     country = Column(String(100))
@@ -70,6 +80,18 @@ class Booking(Base):
     total_amount = Column(Float, nullable=False)
     booking_status = Column(String(20), default='pending', index=True)
     booking_reference = Column(String(20), unique=True, nullable=False)
+    
+    # NEW: Check-in/Check-out Tracking (for Feature 3)
+    actual_check_in = Column(DateTime)
+    actual_check_out = Column(DateTime)
+    checked_in_by = Column(Integer, ForeignKey('admin_users.admin_id'))
+    checked_out_by = Column(Integer, ForeignKey('admin_users.admin_id'))
+    
+    # NEW: Guest ID Verification (for Feature 1)
+    guest_id_number = Column(String(50))
+    id_verified = Column(Boolean, default=False)
+    verification_date = Column(DateTime)
+    
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
