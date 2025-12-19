@@ -1,0 +1,490 @@
+@startuml Check-In Activity
+
+skinparam {
+  defaultFontName Segoe UI
+  defaultFontSize 10
+  shadowing true
+  shadowingIntensity 25
+  backgroundColor #FFFFFF
+  roundcorner 8
+  
+  activity {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    BorderThickness 2
+    BorderStyle solid
+    FontColor #2C3E50
+    FontSize 11
+    FontStyle normal
+    DiamondBackgroundColor #FFFFFF
+    DiamondBorderColor #3498DB
+    DiamondBorderThickness 2
+    DiamondFontColor #2C3E50
+    StartColor #3498DB
+    StartBorderColor #2C3E50
+    EndColor #27AE60
+    EndBorderColor #2C3E50
+    BarColor #7F8C8D
+  }
+  
+  arrow {
+    Color #2C3E50
+    Thickness 2
+    FontColor #2C3E50
+    FontSize 9
+  }
+  
+  note {
+    BackgroundColor #FFF3E0
+    BorderColor #FF9800
+    BorderThickness 1
+    BorderStyle solid
+    FontColor #5D4037
+    FontSize 9
+    RoundCorner 8
+  }
+  
+  partition {
+    BackgroundColor #F8F9FA
+    BorderColor #3498DB
+    BorderThickness 2
+    BorderStyle solid
+    FontColor #2C3E50
+    FontSize 12
+    FontStyle bold
+    RoundCorner 10
+    Padding 10
+  }
+}
+
+title <color:#2C3E50><size:16><b>SOLIVIE HOTEL - GUEST CHECK-IN WORKFLOW</b></size></title>
+
+caption <color:#546E7A><i>Complete guest arrival and registration process</i></caption>
+
+' ============================================
+' PHASE 1: GUEST ARRIVAL & GREETING
+' ============================================
+
+|#F8FBFF|<color:#3498DB><b>🏨 GUEST ARRIVAL</b></color>|
+start
+:Guest arrives at hotel entrance;
+:Guest approaches reception desk;
+:Receptionist greets guest warmly;
+:Receptionist accesses check-in system;
+
+' ============================================
+' PHASE 2: BOOKING RETRIEVAL
+' ============================================
+
+|#FFF8E1|<color:#FF9800><b>📋 BOOKING LOCATION</b></color>|
+:Receptionist requests booking details;
+:Guest provides identification method;
+note right
+  <color:#2C3E50><b>Search Methods</b></color>
+  • Booking reference number
+  • Guest name + arrival date
+  • Confirmation email
+  • Phone number lookup
+end note
+
+:Receptionist enters search criteria;
+:System searches reservation database;
+
+if (Booking found?) then (no)
+  :Display "Reservation not found"
+  notification;
+  
+  :Receptionist requests
+  alternative information;
+  
+  if (Alternative search?) then (yes)
+    :Perform secondary search
+    with new parameters;
+    if (Booking found?) then (yes)
+      :Continue to validation;
+    else (no)
+      :Escalate to manager
+      for manual verification;
+      stop
+    endif
+  else (no)
+    :Guest referred to
+    reservations team;
+    stop
+  endif
+else (yes)
+  :Display booking confirmation
+  with details;
+endif
+
+' ============================================
+' PHASE 3: BOOKING VALIDATION
+' ============================================
+
+|#FFEBEE|<color:#EF5350><b>✅ STATUS VERIFICATION</b></color>|
+:System checks booking status
+and validity;
+
+if (Status = "CANCELLED") then (yes)
+  :Display cancellation notice
+  with details;
+  :Offer rebooking assistance;
+  stop
+else if (Status = "CHECKED_IN") then (yes)
+  :Display current room assignment
+  and check-in time;
+  :Provide duplicate key request
+  if needed;
+  stop
+else if (Status = "NO_SHOW") then (yes)
+  :Display no-show status
+  with policies;
+  :Process reinstatement
+  with applicable fees;
+else (CONFIRMED)
+endif
+
+:Check arrival date against
+current date;
+
+if (Early arrival?) then (yes)
+  :Verify room availability
+  for early check-in;
+  
+  if (Room available?) then (yes)
+    :Apply early check-in fee
+    as per policy;
+    :Display fee confirmation
+    to guest;
+  else (no)
+    :Offer luggage storage
+    service;
+    :Provide estimated room
+    ready time;
+    :Offer hotel facilities
+    access;
+  endif
+else (no)
+  :Proceed with standard
+  check-in process;
+endif
+
+' ============================================
+' PHASE 4: PAYMENT VERIFICATION
+' ============================================
+
+|#F1F8E9|<color:#4CAF50><b>💰 PAYMENT PROCESSING</b></color>|
+:System verifies payment status
+and outstanding balances;
+
+if (Balance outstanding?) then (yes)
+  :Display payment summary
+  with amounts due;
+  :Process remaining payment
+  or pre-authorization;
+  
+  if (Payment successful?) then (no)
+    :Display payment failure
+    with error details;
+    :Offer alternative payment
+    methods;
+    if (All methods failed?) then (yes)
+      :Cannot proceed with
+      check-in process;
+      stop
+    else (no)
+    endif
+  else (yes)
+    :Record payment confirmation
+    in system;
+  endif
+else (no)
+  :Payment status confirmed
+  as settled;
+endif
+
+' ============================================
+' PHASE 5: GUEST IDENTIFICATION
+' ============================================
+
+|#E8EAF6|<color:#3F51B5><b>🆔 IDENTITY VERIFICATION</b></color>|
+:Receptionist requests valid
+identification document;
+:Guest presents ID for verification;
+note right
+  <color:#2C3E50><b>Accepted Documents</b></color>
+  • Passport (international guests)
+  • National ID Card
+  • Driver's License
+  • Government-issued ID
+  • Residence Permit
+end note
+
+:Receptionist visually inspects
+document authenticity;
+:Enter ID details into secure system;
+
+if (ID format valid?) then (no)
+  :Display validation errors
+  with specific issues;
+  :Request alternative or
+  valid identification;
+  stop
+else (yes)
+endif
+
+if (ID expired?) then (yes)
+  :Display expiry notification
+  with date;
+  :Cannot accept expired
+  identification;
+  stop
+else (no)
+endif
+
+:Compare ID information with
+booking details;
+
+if (Name mismatch?) then (yes)
+  :Receptionist clarifies
+  with guest;
+  if (Update required?) then (yes)
+    :Update guest profile
+    with correct information;
+    :Require guest confirmation
+    of changes;
+  else (no)
+    :Note discrepancy in
+    guest records;
+  endif
+else (no)
+  :Identity verified
+  successfully;
+endif
+
+' ============================================
+' PHASE 6: ROOM ASSIGNMENT
+' ============================================
+
+|#F3E5F5|<color:#9C27B0><b>🔑 ROOM PREPARATION</b></color>|
+:System retrieves pre-assigned
+room or selects optimal room;
+:Display room details to
+receptionist and guest;
+
+if (Special requests exist?) then (yes)
+  :Review and verify special
+  requests fulfillment;
+  
+  if (All requests satisfied?) then (no)
+    :Explain limitations and
+    offer alternatives;
+    if (Guest accepts?) then (yes)
+      :Proceed with assigned room;
+    else (no)
+      :Attempt room change
+      based on availability;
+    endif
+  else (yes)
+    :Confirm all special requests
+    have been accommodated;
+  endif
+else (no)
+  :Standard room assignment
+  confirmed;
+endif
+
+' ============================================
+' PHASE 7: ADDITIONAL SERVICES
+' ============================================
+
+|#E8F5E9|<color:#00C853><b>🎯 SERVICE UPSELLING</b></color>|
+:Receptionist presents available
+hotel services and upgrades;
+
+fork
+  :Breakfast packages
+  and dining options;
+fork again
+  :Spa and wellness
+  service bookings;
+fork again
+  :Transportation and
+  airport transfers;
+fork again
+  :Late checkout and
+  extended stay options;
+fork again
+  :Room upgrades and
+  premium features;
+end fork
+
+:Guest reviews and selects
+desired services;
+
+if (Services selected?) then (yes)
+  :Add services to booking
+  with pricing;
+  :Process additional payments
+  or authorizations;
+  :Update guest itinerary
+  with service details;
+else (no)
+  :No additional services
+  requested;
+endif
+
+' ============================================
+' PHASE 8: CHECK-IN PROCESSING
+' ============================================
+
+|#E1F5FE|<color:#039BE5><b>⚙️ SYSTEM PROCESSING</b></color>|
+:Receptionist reviews complete
+check-in summary;
+:Guest confirms all details
+are correct;
+
+split
+  :Update booking status
+  to "CHECKED_IN";
+split again
+  :Mark room status as
+  "OCCUPIED";
+split again
+  :Record official check-in
+  timestamp;
+split again
+  :Store encrypted guest
+  ID information;
+end split
+
+:Generate check-in confirmation
+with unique reference;
+
+' ============================================
+' PHASE 9: KEY CARD MANAGEMENT
+' ============================================
+
+|#FFF3E0|<color:#FF9800><b>🔐 ACCESS CONTROL</b></color>|
+:System generates secure
+room access codes;
+:Receptionist programs
+electronic key cards;
+
+if (Key test successful?) then (no)
+  :Reprogram key card
+  with new codes;
+  :Verify functionality
+  before handover;
+else (yes)
+  :Key card activated
+  successfully;
+endif
+
+:Prepare key card envelope
+with room number details;
+
+' ============================================
+' PHASE 10: DOCUMENTATION
+' ============================================
+
+|#FCE4EC|<color:#EC407A><b>📄 GUEST DOCUMENTS</b></color>|
+fork
+  :Generate check-in receipt
+  with summary;
+fork again
+  :Print personalized
+  welcome letter;
+fork again
+  :Prepare hotel information
+  packet with details;
+fork again
+  :Create room service
+  and facilities guide;
+fork again
+  :Generate digital copy
+  for guest email;
+end fork
+
+' ============================================
+' PHASE 11: GUEST BRIEFING
+' ============================================
+
+|#F3E5F5|<color:#9C27B0><b>🗣️ GUEST ORIENTATION</b></color>|
+:Receptionist hands over
+complete guest package;
+:Provide comprehensive briefing
+on hotel facilities;
+
+split
+  :Explain check-out procedures
+  and times;
+split again
+  :Detail breakfast service
+  locations and hours;
+split again
+  :Share WiFi access
+  credentials and instructions;
+split again
+  :Review safety procedures
+  and emergency contacts;
+end split
+
+:Answer any guest questions
+or special requests;
+
+' ============================================
+' PHASE 12: SYSTEM NOTIFICATIONS
+' ============================================
+
+|#E8F5E9|<color:#00C853><b>📢 INTERNAL ALERTS</b></color>|
+fork
+  :Notify housekeeping team
+  of guest arrival;
+fork again
+  :Activate minibar and
+  room control systems;
+fork again
+  :Update hotel management
+  dashboard;
+fork again
+  :Send welcome email with
+  digital documents;
+fork again
+  :Alert restaurant for
+  dining reservations;
+fork again
+  :Log complete check-in
+  in audit system;
+end fork
+
+' ============================================
+' PHASE 13: COMPLETION
+' ============================================
+
+|#F8FBFF|<color:#3498DB><b>🎉 CHECK-IN COMPLETE</b></color>|
+:Receptionist offers final
+assistance and well-wishes;
+:Direct guest to room or
+provide escort if needed;
+:Display check-in completion
+confirmation;
+
+note right
+  <color:#2C3E50><b>Check-in Summary</b></color>
+  • Guest: [Full Name]
+  • Room: [Room Number]
+  • Check-in: [Date & Time]
+  • Check-out: [Date]
+  • Status: COMPLETED ✅
+end note
+
+stop
+
+legend bottom center
+  <color:#3498DB>█</color> ARRIVAL | <color:#FF9800>█</color> BOOKING | <color:#EF5350>█</color> VALIDATION
+  <color:#4CAF50>█</color> PAYMENT | <color:#3F51B5>█</color> ID CHECK | <color:#9C27B0>█</color> ROOM ASSIGN
+  <color:#00C853>█</color> SERVICES | <color:#039BE5>█</color> PROCESSING | <color:#EC407A>█</color> DOCUMENTS
+end legend
+
+@enduml

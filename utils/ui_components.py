@@ -693,8 +693,8 @@ class SolivieUI:
 
 
         
-        @staticmethod
-        def page_header(title, subtitle="", icon="🏨"):
+    @staticmethod
+    def page_header(title, subtitle="", icon="🏨"):
             """Dark luxury header with glow animation"""
             st.markdown(f"""
             <div style='background: linear-gradient(135deg, #2C3E3A 0%, #5A726F 50%, #2C3E3A 100%);

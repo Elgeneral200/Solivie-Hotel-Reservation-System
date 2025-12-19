@@ -1,0 +1,702 @@
+@startuml Solivie Hotel Complete Class Diagram
+
+skinparam {
+  defaultFontName Arial
+  defaultFontSize 9
+  classFontSize 11
+  classAttributeIconSize 0
+  shadowing false
+  linetype ortho
+  nodesep 50
+  ranksep 70
+  backgroundColor #FFFFFF
+  
+  class {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    BorderThickness 2
+    ArrowColor #3498DB
+    FontColor #2C3E50
+    AttributeFontSize 9
+    AttributeFontColor #34495E
+    MethodFontColor #2C3E50
+    StereotypeFontColor #3498DB
+  }
+  
+  package {
+    BackgroundColor #F8F9FA
+    BorderColor #3498DB
+    BorderThickness 2
+    FontColor #2C3E50
+    FontSize 12
+    FontStyle bold
+    RoundCorner 10
+  }
+  
+  note {
+    BackgroundColor #FFF8E1
+    BorderColor #FFC107
+    FontColor #5D4037
+    FontSize 9
+    RoundCorner 5
+  }
+  
+  interface {
+    BackgroundColor #E8F5E8
+    BorderColor #4CAF50
+    BorderThickness 1.5
+    FontColor #2C3E50
+    AttributeFontColor #1B5E20
+  }
+  
+  arrow {
+    Color #2C3E50
+    Thickness 1.5
+    FontColor #2C3E50
+    FontSize 8
+    FontStyle italic
+  }
+  
+  diamond {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+  }
+}
+
+left to right direction
+
+title <color:#2C3E50><b>Solivie Hotel Management System - Complete Class Diagram</b></color>
+
+package "<color:#3498DB><b>Core Entities</b></color>" #F0F8FF {
+    
+    class User <<Entity>> {
+        __Attributes__
+        - user_id: int <<PK>>
+        - email: string <<Unique>>
+        - password_hash: string
+        - first_name: string
+        - last_name: string
+        - phone_number: string
+        ~ address: string
+        ~ city: string
+        ~ country: string
+        # national_id: string <<Encrypted>>
+        # passport_number: string <<Encrypted>>
+        - is_admin: boolean
+        - loyalty_points: int
+        ~ account_status: string
+        - created_at: datetime
+        / full_name: string <<Derived>>
+        / age: int <<Derived>>
+        __Methods__
+        + register(user_data: dict): boolean
+        + login(email: string, password: string): User
+        + update_profile(data: dict): boolean
+        + change_password(old: string, new: string): boolean
+        + get_bookings(): List[Booking]
+        + get_loyalty_balance(): int
+        # validate_age(): boolean
+        # encrypt_sensitive_data(): void
+        ~ get_full_name(): string
+        - hash_password(password: string): string
+    }
+    
+    class Room <<Entity>> {
+        __Attributes__
+        - room_id: int <<PK>>
+        - room_number: string <<Unique>>
+        - room_type: string
+        - capacity: int
+        - base_price_per_night: decimal
+        ~ floor_number: int
+        ~ view_type: string
+        + description: text
+        - status: string
+        ~ amenities: json
+        / is_available: boolean <<Derived>>
+        / occupancy_rate: float <<Derived>>
+        __Methods__
+        + create(room_data: dict): Room
+        + update(room_data: dict): boolean
+        + delete(): boolean
+        + check_availability(dates: tuple): boolean
+        + get_price(nights: int): decimal
+        + update_status(status: string): void
+        # validate_room_number(): boolean
+        ~ get_amenities_list(): List[string]
+        - generate_room_id(): int
+    }
+    
+    class Booking <<Entity>> {
+        __Attributes__
+        - booking_id: int <<PK>>
+        - booking_reference: string <<Unique>>
+        - user_id: int <<FK>>
+        - room_id: int <<FK>>
+        + check_in_date: date
+        + check_out_date: date
+        + num_guests: int
+        ~ num_nights: int
+        - total_amount: decimal
+        - booking_status: string
+        + special_requests: text
+        / days_until_checkin: int <<Derived>>
+        / is_cancellable: boolean <<Derived>>
+        / refund_amount: decimal <<Derived>>
+        __Methods__
+        + create(booking_data: dict): Booking
+        + cancel(reason: string): boolean
+        + update_status(status: string): void
+        + calculate_total(): decimal
+        + check_in(id_data: dict): boolean
+        + check_out(): boolean
+        # validate_dates(): boolean
+        ~ generate_reference(): string
+        - save_to_database(): void
+    }
+    
+    class Payment <<Entity>> {
+        __Attributes__
+        - payment_id: int <<PK>>
+        - booking_id: int <<FK>>
+        - amount: decimal
+        + payment_method: string
+        - transaction_id: string <<Unique>>
+        - payment_status: string
+        - payment_date: datetime
+        / is_refundable: boolean <<Derived>>
+        / net_amount: decimal <<Derived>>
+        __Methods__
+        + process(method: string, card_data: dict): boolean
+        + verify_transaction(): boolean
+        + generate_invoice(): Invoice
+        + process_refund(amount: decimal): boolean
+        # validate_amount(amount: decimal): boolean
+        # encrypt_card_data(data: dict): string
+        ~ generate_transaction_id(): string
+    }
+    
+    class Cart <<Entity>> {
+        __Attributes__
+        - cart_id: int <<PK>>
+        - user_id: int <<FK>>
+        - created_at: datetime
+        / total_items: int <<Derived>>
+        / total_amount: decimal <<Derived>>
+        / is_empty: boolean <<Derived>>
+        __Methods__
+        + add_item(room: Room, dates: tuple, guests: int): CartItem
+        + remove_item(item_id: int): boolean
+        + clear(): void
+        + get_items(): List[CartItem]
+        + get_total(): decimal
+        # validate_capacity(): boolean
+        ~ get_item_count(): int
+    }
+    
+    class CartItem <<Entity>> {
+        __Attributes__
+        - cart_item_id: int <<PK>>
+        - cart_id: int <<FK>>
+        - room_id: int <<FK>>
+        + check_in_date: date
+        + check_out_date: date
+        ~ num_nights: int
+        - total_price: decimal
+        / is_valid: boolean <<Derived>>
+        __Methods__
+        + calculate_nights(): int
+        + calculate_price(): decimal
+        + validate_dates(): boolean
+        + check_availability(): boolean
+        # validate_date_range(): boolean
+    }
+    
+    class Review <<Entity>> {
+        __Attributes__
+        - review_id: int <<PK>>
+        - booking_id: int <<FK>>
+        - user_id: int <<FK>>
+        - room_id: int <<FK>>
+        + rating: int <<1-5>>
+        + comment: text
+        ~ status: string
+        # admin_response: text
+        / is_approved: boolean <<Derived>>
+        __Methods__
+        + submit(rating: int, comment: string): boolean
+        + edit(rating: int, comment: string): boolean
+        + approve(): void
+        + reject(): void
+        # validate_rating(rating: int): boolean
+        ~ add_admin_response(response: string): void
+    }
+    
+    class Invoice <<Entity>> {
+        __Attributes__
+        - invoice_id: int <<PK>>
+        - booking_id: int <<FK>>
+        - invoice_number: string <<Unique>>
+        - subtotal: decimal
+        ~ tax_amount: decimal
+        - total_amount: decimal
+        - issued_date: datetime
+        - pdf_path: string
+        / is_paid: boolean <<Derived>>
+        / is_overdue: boolean <<Derived>>
+        __Methods__
+        + generate(booking: Booking, payment: Payment): string
+        + generate_pdf(): string
+        + send_email(recipient: string): boolean
+        # calculate_tax(amount: decimal): decimal
+        ~ generate_invoice_number(): string
+    }
+    
+    class CheckIn <<Entity>> {
+        __Attributes__
+        - check_in_id: int <<PK>>
+        - booking_id: int <<FK>>
+        - user_id: int <<FK>>
+        - admin_id: int <<FK>>
+        # id_type: string <<Encrypted>>
+        # id_number: string <<Encrypted>>
+        - check_in_time: datetime
+        / is_id_valid: boolean <<Derived>>
+        __Methods__
+        + verify_identity(id_data: dict): boolean
+        + process(booking_id: int, id_data: dict): boolean
+        + log_check_in(): void
+        # validate_id_expiry(date: date): boolean
+        # encrypt_id_data(): void
+    }
+    
+    class LoyaltyTransaction <<Entity>> {
+        __Attributes__
+        - transaction_id: int <<PK>>
+        - user_id: int <<FK>>
+        - booking_id: int <<FK>>
+        + points: int
+        + transaction_type: string
+        + description: string
+        / is_redemption: boolean <<Derived>>
+        / points_value: decimal <<Derived>>
+        __Methods__
+        + to_dict(): dict
+        # validate_points(points: int): boolean
+        ~ save_transaction(): void
+    }
+}
+
+package "<color:#2ECC71><b>Business Logic Layer</b></color>" #F1F8E9 {
+    
+    class UserManager <<Manager>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ cache: dict
+        __Methods__
+        + create_user(data: dict): User
+        + authenticate(email: string, pwd: string): User
+        + update_user(id: int, data: dict): boolean
+        + get_user_by_id(id: int): User
+        + get_user_by_email(email: string): User
+        + deactivate_user(id: int): boolean
+        # validate_user_data(data: dict): boolean
+        ~ cache_user(user: User): void
+    }
+    
+    class RoomManager <<Manager>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ room_cache: dict
+        / available_rooms_count: int <<Derived>>
+        __Methods__
+        + create_room(data: dict): Room
+        + update_room(id: int, data: dict): boolean
+        + delete_room(id: int): boolean
+        + get_room_by_id(id: int): Room
+        + get_all_rooms(): List[Room]
+        + filter_rooms(filters: dict): List[Room]
+        # validate_room_data(data: dict): boolean
+        ~ update_room_status(id: int, status: string): void
+    }
+    
+    class BookingManager <<Manager>> {
+        __Attributes__
+        # availability_checker: AvailabilityChecker
+        # pricing_calculator: PricingCalculator
+        ~ booking_cache: dict
+        / total_bookings: int <<Derived>>
+        __Methods__
+        + create_booking(data: dict): Booking
+        + cancel_booking(id: int, reason: string): boolean
+        + update_status(id: int, status: string): boolean
+        + get_booking_by_id(id: int): Booking
+        + get_user_bookings(user_id: int): List[Booking]
+        # validate_booking_data(data: dict): boolean
+        ~ calculate_booking_cost(data: dict): decimal
+    }
+    
+    class CartManager <<Manager>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ cart_cache: dict
+        / active_carts_count: int <<Derived>>
+        __Methods__
+        + get_user_cart(user_id: int): Cart
+        + add_to_cart(user_id: int, room_id: int, dates: tuple): boolean
+        + remove_from_cart(user_id: int, item_id: int): boolean
+        + clear_cart(user_id: int): void
+        + validate_cart_items(cart: Cart): List[CartItem]
+        # create_cart_if_not_exists(user_id: int): Cart
+    }
+    
+    class ReviewManager <<Manager>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ review_cache: dict
+        / pending_reviews_count: int <<Derived>>
+        __Methods__
+        + create_review(data: dict): Review
+        + update_review(id: int, data: dict): boolean
+        + get_room_reviews(room_id: int): List[Review]
+        + moderate_review(id: int, action: string): boolean
+        # validate_review_data(data: dict): boolean
+        ~ calculate_room_rating(room_id: int): float
+    }
+    
+    class CheckInManager <<Manager>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ check_in_log: List[CheckIn]
+        __Methods__
+        + process_check_in(booking_id: int, id_data: dict, admin_id: int): CheckIn
+        + verify_guest_identity(id_data: dict): boolean
+        + validate_booking(booking_id: int): boolean
+        # update_booking_status(booking_id: int): void
+        # validate_id_documents(id_data: dict): boolean
+        ~ log_check_in_event(check_in: CheckIn): void
+    }
+    
+    class LoyaltyProgram <<Utility>> {
+        __Attributes__
+        - points_per_dollar: int <<Static>>
+        - redemption_rate: decimal <<Static>>
+        __Methods__
+        + {static} award(user_id: int, booking_id: int, amount: decimal): int
+        + {static} redeem(user_id: int, points: int): boolean
+        + {static} get_user_balance(user_id: int): int
+        + {static} get_user_history(user_id: int): List[LoyaltyTransaction]
+        # {static} get_user_tier(points: int): string
+        ~ {static} get_tier_benefits(points: int): dict
+    }
+    
+    class CancellationHandler <<Handler>> {
+        __Attributes__
+        # refund_manager: RefundManager
+        # email_service: EmailService
+        ~ cancellation_policy: dict
+        __Methods__
+        + cancel_booking(booking_id: int, reason: string): boolean
+        + calculate_refund_amount(booking: Booking): decimal
+        + process_cancellation(booking: Booking): boolean
+        # update_booking_status(booking_id: int): void
+        ~ send_cancellation_email(booking: Booking): boolean
+    }
+    
+    class RefundManager <<Manager>> {
+        __Attributes__
+        # payment_gateway: PaymentGateway
+        ~ refund_log: List[dict]
+        / pending_refunds_count: int <<Derived>>
+        __Methods__
+        + process_refund(payment: Payment, amount: decimal, reason: string): boolean
+        + calculate_refund_amount(booking: Booking): decimal
+        + initiate_refund(payment_id: int, amount: decimal): string
+        # validate_refund_amount(payment: Payment, amount: decimal): boolean
+        ~ log_refund_transaction(payment: Payment, amount: decimal): void
+    }
+}
+
+package "<color:#E74C3C><b>Service Layer</b></color>" #FFEBEE {
+    
+    class AvailabilityChecker <<Service>> {
+        __Attributes__
+        # session_factory: SessionFactory
+        ~ availability_cache: dict
+        __Methods__
+        + check_room_availability(room_id: int, dates: tuple): boolean
+        + get_available_rooms(dates: tuple, capacity: int): List[Room]
+        + get_occupancy_rate(dates: tuple): float
+        # check_overlapping_bookings(room_id: int, dates: tuple): List[Booking]
+        ~ cache_availability(room_id: int, dates: tuple, available: boolean): void
+    }
+    
+    class PricingCalculator <<Utility>> {
+        __Attributes__
+        - {static} base_tax_rate: decimal
+        # {static} seasonal_rates: dict
+        ~ {static} weekend_multiplier: decimal
+        __Methods__
+        + {static} calculate_booking_price(room: Room, nights: int): decimal
+        + {static} apply_discount(price: decimal, discount: float): decimal
+        + {static} calculate_tax(amount: decimal): decimal
+        + {static} calculate_refund_amount(booking: Booking): decimal
+        # {static} get_seasonal_rate(date: date): decimal
+        ~ {static} get_cancellation_penalty(booking: Booking): decimal
+    }
+    
+    class PaymentProcessor <<Service>> {
+        __Attributes__
+        # payment_gateway: PaymentGateway
+        ~ transaction_log: List[dict]
+        / successful_payments_count: int <<Derived>>
+        __Methods__
+        + process_payment(booking: Booking, method: string, card_data: dict): Payment
+        + verify_transaction(transaction_id: string): boolean
+        + process_refund(payment: Payment, amount: decimal): boolean
+        + get_payment_by_booking(booking_id: int): Payment
+        # validate_card_data(card_data: dict): boolean
+        ~ log_transaction(transaction: dict): void
+    }
+    
+    class InvoiceGenerator <<Service>> {
+        __Attributes__
+        # pdf_generator: PDFGenerator
+        # template_loader: TemplateLoader
+        ~ invoice_cache: dict
+        __Methods__
+        + generate_invoice(booking: Booking, payment: Payment): Invoice
+        + generate_pdf(invoice: Invoice): string
+        + send_invoice_email(invoice: Invoice, recipient: string): boolean
+        # load_invoice_template(): string
+        ~ generate_invoice_number(): string
+    }
+    
+    class EmailService <<Service>> {
+        __Attributes__
+        - smtp_server: string
+        - smtp_port: int
+        # smtp_username: string
+        # smtp_password: string
+        ~ template_path: string
+        / emails_sent_count: int <<Derived>>
+        __Methods__
+        + send_email(recipient: string, subject: string, body: string): boolean
+        + send_booking_confirmation(booking: Booking): boolean
+        + send_cancellation_notice(booking: Booking): boolean
+        + send_password_reset(user: User, token: string): boolean
+        # connect_smtp(): SMTPConnection
+        # validate_email_address(email: string): boolean
+        ~ get_connection_from_pool(): SMTPConnection
+    }
+    
+    class PasswordManager <<Utility>> {
+        __Attributes__
+        - {static} hash_algorithm: string
+        # {static} pepper: string
+        ~ {static} reset_token_validity: int
+        __Methods__
+        + {static} hash_password(password: string): string
+        + {static} verify_password(password: string, hash: string): boolean
+        + {static} generate_reset_token(user: User): string
+        + {static} validate_reset_token(token: string): User
+        # {static} generate_salt(): string
+        ~ {static} hash_with_salt(password: string, salt: string): string
+    }
+    
+    class SessionManager <<Utility>> {
+        __Attributes__
+        - {static} active_sessions: dict
+        # {static} session_timeout: int
+        __Methods__
+        + {static} create_session(user: User): string
+        + {static} get_session(session_id: string): dict
+        + {static} destroy_session(session_id: string): void
+        + {static} is_valid_session(session_id: string): boolean
+        # {static} validate_session(session: dict): boolean
+        ~ {static} cleanup_expired_sessions(): int
+    }
+    
+    class Validator <<Utility>> {
+        __Attributes__
+        ~ {static} email_pattern: string
+        ~ {static} phone_pattern: string
+        __Methods__
+        + {static} validate_email(email: string): boolean
+        + {static} validate_phone(phone: string): boolean
+        + {static} validate_date(date: string): boolean
+        + {static} validate_date_range(start: date, end: date): boolean
+        + {static} validate_credit_card(card_number: string): boolean
+        + {static} sanitize_input(input: string): string
+        # {static} check_sql_injection(input: string): boolean
+    }
+    
+    class Logger <<Utility>> {
+        __Attributes__
+        - log_file: string
+        - log_level: string
+        # log_formatter: Formatter
+        ~ buffer: List[string]
+        __Methods__
+        + {static} log_info(message: string): void
+        + {static} log_warning(message: string): void
+        + {static} log_error(message: string, error: Exception): void
+        + {static} log_debug(message: string): void
+        # format_log_message(level: string, message: string): string
+        ~ flush_buffer(): void
+    }
+}
+
+package "<color:#9B59B6><b>Database Layer</b></color>" #F3E5F5 {
+    
+    class DatabaseManager <<Singleton>> {
+        __Attributes__
+        - connection_string: string
+        - engine: Engine
+        # session_factory: SessionFactory
+        ~ connection_pool: ConnectionPool
+        / active_connections: int <<Derived>>
+        __Methods__
+        + get_session(): Session
+        + close_session(session: Session): void
+        + execute_query(query: string, params: dict): ResultProxy
+        + commit_transaction(session: Session): void
+        + rollback_transaction(session: Session): void
+        # init_connection(): void
+        ~ get_connection_from_pool(): Connection
+    }
+}
+
+package "<color:#F39C12><b>External Interfaces</b></color>" #FFF3E0 {
+    
+    interface PaymentGateway <<Interface>> {
+        + charge(amount: decimal, card_data: dict): dict
+        + refund(transaction_id: string, amount: decimal): dict
+        + verify_transaction(transaction_id: string): dict
+        + get_transaction_status(transaction_id: string): string
+    }
+    
+    interface PDFGenerator <<Interface>> {
+        + generate_pdf(template: string, data: dict): bytes
+        + save_pdf(pdf_data: bytes, path: string): boolean
+        + get_pdf_metadata(pdf_data: bytes): dict
+    }
+    
+    interface SMTPConnection <<Interface>> {
+        + connect(server: string, port: int): void
+        + login(username: string, password: string): void
+        + send_message(message: dict): void
+        + disconnect(): void
+    }
+}
+
+' Core Entity Relationships
+User "1" -- "0..*" Booking : makes
+User "1" -- "0..1" Cart : has
+User "1" -- "0..*" Review : writes
+User "1" -- "0..*" LoyaltyTransaction : accumulates
+
+Room "1" -- "0..*" Booking : reserved in
+Room "1" -- "0..*" Review : receives
+Room "1" -- "0..*" CartItem : added to
+
+Booking "1" -- "1" Payment : has
+Booking "1" -- "0..1" Invoice : generates
+Booking "1" -- "0..1" Review : results in
+Booking "1" -- "0..1" CheckIn : processed as
+
+Cart "1" *-- "0..*" CartItem : contains
+Payment "1" *-- "1" Invoice : produces
+
+' Manager Dependencies
+BookingManager ..> Booking : manages
+BookingManager ..> AvailabilityChecker : uses
+BookingManager ..> PricingCalculator : uses
+
+RoomManager ..> Room : manages
+UserManager ..> User : manages
+UserManager ..> PasswordManager : uses
+UserManager ..> Validator : uses
+
+PaymentProcessor ..> Payment : creates
+PaymentProcessor ..> PaymentGateway : implements
+PaymentProcessor ..> InvoiceGenerator : uses
+PaymentProcessor ..> EmailService : uses
+
+InvoiceGenerator ..> Invoice : creates
+InvoiceGenerator ..> PDFGenerator : implements
+
+CartManager ..> Cart : manages
+CartManager ..> CartItem : manages
+
+ReviewManager ..> Review : manages
+CheckInManager ..> CheckIn : manages
+CheckInManager ..> Booking : validates
+
+CancellationHandler ..> RefundManager : delegates to
+CancellationHandler ..> EmailService : uses
+RefundManager ..> Payment : refunds
+RefundManager ..> PaymentGateway : uses
+
+LoyaltyProgram ..> LoyaltyTransaction : creates
+AvailabilityChecker ..> Room : checks
+AvailabilityChecker ..> Booking : queries
+
+EmailService ..> SMTPConnection : implements
+
+' Composition Relationships
+UserManager o-- User
+RoomManager o-- Room
+BookingManager o-- Booking
+CartManager o-- Cart
+
+note top of User
+  **<color:#2C3E50>Visibility Modifiers</color>**
+  <color:#2C3E50>+</color> <b>Public</b>: Accessible by all
+  <color:#2C3E50>-</color> <b>Private</b>: Class only
+  <color:#2C3E50>#</color> <b>Protected</b>: Inherited classes
+  <color:#2C3E50>~</color> <b>Package</b>: Same package
+  <color:#2C3E50>/</color> <b>Derived</b>: Calculated field
+end note
+
+note right of Booking
+  **<color:#2C3E50>Entity Relationships</color>**
+  1..* = One to Many
+  0..1 = Zero or One
+  *-- = Composition
+  -- = Association
+  ..> = Dependency
+  o-- = Aggregation
+end note
+
+note bottom of Cart
+  **<color:#2C3E50>Composition Pattern</color>**
+  Cart *-- CartItem
+  Lifecycle bound
+  Strong ownership
+  Cascade delete
+end note
+
+note left of LoyaltyProgram
+  **<color:#2C3E50>Static Utility Class</color>**
+  No instance creation
+  Stateless operations
+  Shared across system
+end note
+
+legend right
+  | <b>Package</b> | <b>Purpose</b> |
+  | <color:#3498DB>█</color> Core Entities | Business objects |
+  | <color:#2ECC71>█</color> Business Logic | Managers & handlers |
+  | <color:#E74C3C>█</color> Service Layer | Utilities & services |
+  | <color:#9B59B6>█</color> Database | Data persistence |
+  | <color:#F39C12>█</color> External | Interfaces & adapters |
+  | **Stereotype** | **Purpose** |
+  | <<Entity>> | Persistent objects |
+  | <<Manager>> | Business logic |
+  | <<Service>> | Reusable services |
+  | <<Utility>> | Helper functions |
+  | <<Interface>> | External contracts |
+end legend
+
+@enduml

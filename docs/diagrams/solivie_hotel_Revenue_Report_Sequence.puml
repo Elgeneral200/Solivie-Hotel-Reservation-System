@@ -1,0 +1,340 @@
+@startuml Revenue Report Sequence
+
+skinparam {
+  backgroundColor #FFFFFF
+  defaultFontName Segoe UI
+  defaultFontSize 10
+  shadowing true
+  shadowingIntensity 15
+  
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2C3E50
+  ParticipantBorderThickness 2
+  ParticipantFontColor #2C3E50
+  ParticipantFontSize 11
+  ParticipantFontStyle bold
+  
+  ActorBackgroundColor #E3F2FD
+  ActorBorderColor #1976D2
+  ActorFontColor #2C3E50
+  ActorFontSize 11
+  ActorFontStyle bold
+  
+  DatabaseBackgroundColor #F3E5F5
+  DatabaseBorderColor #7B1FA2
+  DatabaseFontColor #2C3E50
+  DatabaseFontSize 11
+  DatabaseFontStyle bold
+  
+  ArrowColor #2C3E50
+  ArrowThickness 1.5
+  ArrowFontColor #2C3E50
+  ArrowFontSize 9
+  
+  NoteBackgroundColor #FFF3E0
+  NoteBorderColor #FF9800
+  NoteFontColor #5D4037
+  NoteFontSize 9
+  NoteRoundCorner 8
+  
+  LifeLineBackgroundColor #F5F5F5
+  LifeLineBorderColor #BDBDBD
+  
+  AltBackgroundColor #E8F5E9
+  AltBorderColor #388E3C
+  AltFontColor #2C3E50
+  
+  LoopBackgroundColor #FFF3E0
+  LoopBorderColor #FF9800
+  LoopFontColor #5D4037
+}
+
+title <color:#2C3E50><size:16><b>SOLIVIE HOTEL - REVENUE ANALYTICS SEQUENCE DIAGRAM</b></size></title>
+
+caption <color:#546E7A><i>Financial reporting and revenue analysis workflow</i></caption>
+
+actor "Hotel Manager" as Admin <<Management>>
+participant "Analytics Dashboard" as RP <<UI>>
+participant "Report Engine" as RG <<Service>>
+participant "Data Aggregator" as DA <<Service>>
+participant "Visualization Service" as VS <<Service>>
+participant "Export Service" as ES <<Service>>
+database "Hotel Database" as DB <<PostgreSQL>>
+
+' ============================================
+' PHASE 1: REPORT CONFIGURATION
+' ============================================
+
+Admin -> RP: **1. NAVIGATE to analytics**\n📊 Access reports section
+note right of Admin
+  <color:#2C3E50><b>User Role</b></color>
+  • Management access required
+  • Financial permissions
+  • Audit trail logging
+  • Data export rights
+end note
+
+activate RP
+
+RP -> RP: **2. LOAD report_templates**\n📋 Available report types
+note right of RP
+  <color:#2C3E50><b>Report Options</b></color>
+  • Revenue Analysis
+  • Occupancy Reports
+  • Guest Demographics
+  • Operational Metrics
+  • Custom Reports
+end note
+
+Admin -> RP: **3. SELECT "Revenue Report"**\n💰 Financial analytics
+Admin -> RP: **4. SET date_range**\n📅 Custom time period
+
+note right of RP
+  <color:#2C3E50><b>Date Parameters</b></color>
+  • Start date: [YYYY-MM-DD]
+  • End date: [YYYY-MM-DD]
+  • Comparison periods
+  • Real-time vs historical
+end note
+
+Admin -> RP: **5. APPLY filters**\n🔍 Data segmentation
+note right of RP
+  <color:#2C3E50><b>Filter Options</b></color>
+  • Property/location
+  • Room categories
+  • Guest segments
+  • Booking channels
+  • Payment methods
+end note
+
+Admin -> RP: **6. INITIATE generation**\n🚀 Generate report
+RP -> RG: **7. generate_revenue_report()**\n📈 Start processing
+activate RG
+
+' ============================================
+' PHASE 2: DATA EXTRACTION
+' ============================================
+
+RG -> DA: **8. extract_financial_data()**\n💰 Payment information
+activate DA
+
+DA -> DB: **9. QUERY payments**\n📊 Completed transactions
+activate DB
+DB --> DA: **10. RETURN payment_records**\n✅ [N] transactions found
+deactivate DB
+
+DA -> DB: **11. QUERY bookings**\n📅 Reservation data
+activate DB
+DB --> DA: **12. RETURN booking_records**\n✅ [M] bookings retrieved
+deactivate DB
+
+DA -> DB: **13. QUERY refunds**\n💸 Reversed transactions
+activate DB
+DB --> DA: **14. RETURN refund_records**\n✅ [R] refunds processed
+deactivate DB
+
+DA --> RG: **15. RETURN consolidated_data**\n📦 Raw data aggregated
+deactivate DA
+
+' ============================================
+' PHASE 3: DATA PROCESSING
+' ============================================
+
+RG -> RG: **16. calculate_revenue_metrics()**\n🧮 Financial calculations
+
+RG -> RG: **17. compute_total_revenue()**\n💰 Gross revenue
+note right of RG
+  <color:#2C3E50><b>Revenue Calculation</b></color>
+  Gross Revenue = Sum(all payments)
+  - Refunds
+  - Cancellations
+  + Service charges
+  = Net Revenue
+end note
+
+RG -> RG: **18. compute_average_transaction()**\n📊 Statistical analysis
+
+RG -> RG: **19. analyze_payment_methods()**\n💳 Method breakdown
+loop **Each payment method**
+  RG -> RG: **20. sum_by_method()**\n💵 Method total
+  RG -> RG: **21. calculate_percentage()**\n📈 Market share
+end loop
+
+RG -> RG: **22. compute_daily_trends()**\n📅 Time-based analysis
+
+RG -> RG: **23. calculate_occupancy_revenue()**\n🏨 Room revenue correlation
+
+RG -> RG: **24. identify_top_segments()**\n👥 High-value segments
+
+' ============================================
+' PHASE 4: ADVANCED ANALYTICS
+' ============================================
+
+RG -> RG: **25. generate_comparative_analysis()**\n📊 Period comparison
+note right of RG
+  <color:#2C3E50><b>Comparative Metrics</b></color>
+  • Month-over-month growth
+  • Year-over-year performance
+  • Seasonal patterns
+  • Trend projections
+  • Forecast accuracy
+end note
+
+RG -> RG: **26. compute_kpis()**\n🎯 Performance indicators
+loop **Each KPI category**
+  RG -> RG: **27. calculate_kpi()**\n📈 Performance metric
+  RG -> RG: **28. assess_targets()**\n🎯 Goal achievement
+end loop
+
+RG -> RG: **29. detect_anomalies()**\n⚠️ Exception reporting
+
+RG -> RG: **30. generate_executive_summary()**\n📋 Key insights
+
+' ============================================
+' PHASE 5: VISUALIZATION PREPARATION
+' ============================================
+
+RG -> VS: **31. prepare_visualizations()**\n📊 Chart generation
+activate VS
+
+VS -> VS: **32. create_revenue_chart()**\n📈 Line/bar charts
+VS -> VS: **33. create_method_pie_chart()**\n🥧 Payment distribution
+VS -> VS: **34. create_trend_heatmap()**\n🔥 Revenue patterns
+VS -> VS: **35. create_comparison_charts()**\n⚖️ Period comparison
+
+VS -> VS: **36. optimize_chart_data()**\n⚡ Performance tuning
+VS -> VS: **37. apply_branding_styles()**\n🎨 Corporate design
+
+VS --> RG: **38. RETURN visualization_data**\n✅ Charts ready
+deactivate VS
+
+' ============================================
+' PHASE 6: REPORT ASSEMBLY
+' ============================================
+
+RG --> RP: **39. RETURN complete_report**\n📋 Data + Visualizations
+deactivate RG
+
+RP -> RP: **40. render_dashboard()**\n🖥️ Interactive display
+note right of RP
+  <color:#2C3E50><b>Dashboard Features</b></color>
+  • Interactive filters
+  • Real-time updates
+  • Drill-down capability
+  • Export options
+  • Sharing features
+end note
+
+RP -> RP: **41. display_metrics_summary()**\n📊 Key statistics
+
+RP -> RP: **42. render_charts_visualization()**\n📈 Graphical display
+
+RP -> RP: **43. enable_interactivity()**\n🖱️ User controls
+
+RP --> Admin: **44. DISPLAY revenue_dashboard**\n🎉 Report complete
+note right of RP
+  <color:#2C3E50><b>Report Contents</b></color>
+  • Executive summary
+  • Revenue breakdown
+  • Payment method analysis
+  • Comparative metrics
+  • Trend projections
+  • Actionable insights
+end note
+
+deactivate RP
+
+' ============================================
+' PHASE 7: EXPORT & DISTRIBUTION
+' ============================================
+
+alt **Export to PDF**
+  Admin -> RP: **45. SELECT "Export PDF"**\n📄 Document export
+  activate RP
+  
+  RP -> ES: **46. export_report_to_pdf()**\n🖨️ PDF generation
+  activate ES
+  
+  ES -> ES: **47. generate_pdf_document()**\n📋 Layout creation
+  note right of ES
+    <color:#2C3E50><b>PDF Features</b></color>
+    • Professional formatting
+    • Corporate branding
+    • Watermark (Confidential)
+    • Digital timestamps
+    • Print optimization
+  end note
+  
+  ES -> ES: **48. apply_security_features()**\n🔒 Document protection
+  ES -> ES: **49. optimize_file_size()**\n⚡ Performance
+  
+  ES --> RP: **50. RETURN pdf_document**\n✅ PDF ready
+  deactivate ES
+  
+  RP -> RP: **51. initiate_file_download()**\n⬇️ Browser download
+  RP --> Admin: **52. DOWNLOAD complete_pdf**\n📄 Document saved
+  deactivate RP
+  
+else **Export to Spreadsheet**
+  Admin -> RP: **53. SELECT "Export Excel"**\n📊 Data export
+  RP -> ES: **54. export_to_spreadsheet()**\n📈 Excel generation
+  ES --> RP: **55. RETURN spreadsheet_file**\n✅ Excel ready
+  RP --> Admin: **56. DOWNLOAD data_file**\n📊 Raw data
+end
+
+' ============================================
+' PHASE 8: AUDIT & COMPLETION
+' ============================================
+
+RP -> DB: **57. LOG report_generation**\n📋 Audit trail
+activate DB
+DB --> RP: **58. RETURN audit_confirmed**\n✅ Record saved
+deactivate DB
+
+RP -> RP: **59. update_usage_statistics()**\n📈 Analytics usage
+
+RP -> Admin: **60. NOTIFY completion**\n✅ Process finished
+
+' ============================================
+' SUMMARY & LEGEND
+' ============================================
+
+note over Admin, DB
+  <color:#2C3E50><b>Revenue Report Summary</b></size></color>
+  
+  <b>⏱️ Processing Time:</b> 2-10 seconds
+  <b>📊 Data Points Processed:</b> Thousands to millions
+  <b>🔗 System Components:</b> 6+ services
+  <b>📈 Report Types:</b> 10+ metrics categories
+  
+  <b>Key Financial Metrics:</b>
+  • Total Revenue: [Calculated]
+  • Average Daily Rate (ADR)
+  • Revenue Per Available Room (RevPAR)
+  • Gross Operating Profit (GOP)
+  • Net Revenue Management
+  
+  <b>Compliance & Security:</b>
+  • Financial data encryption
+  • Access control & permissions
+  • Audit trail maintenance
+  • Data retention policies
+  • GDPR compliance
+end note
+
+legend right
+  | <b>Component Type</b> | <b>Color</b> |
+  | Management User | <color:#1976D2>█</color> |
+  | User Interface | <color:#2C3E50>█</color> |
+  | Service Layer | <color:#D32F2F>█</color> |
+  | External Service | <color:#FF9800>█</color> |
+  | Database | <color:#7B1FA2>█</color> |
+  | **Process Step** | **Icon** |
+  | Data Extraction | 📊 |
+  | Calculation | 🧮 |
+  | Visualization | 📈 |
+  | Export | 📄 |
+  | Completion | ✅ |
+end legend
+
+@enduml

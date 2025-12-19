@@ -1,0 +1,439 @@
+@startuml Generate Reports Activity
+
+skinparam {
+  defaultFontName Segoe UI
+  defaultFontSize 10
+  shadowing true
+  shadowingIntensity 20
+  backgroundColor #FFFFFF
+  roundcorner 8
+  
+  activity {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    BorderThickness 2
+    BorderStyle solid
+    FontColor #2C3E50
+    FontSize 11
+    FontStyle normal
+    DiamondBackgroundColor #FFFFFF
+    DiamondBorderColor #3498DB
+    DiamondBorderThickness 2
+    DiamondFontColor #2C3E50
+    StartColor #3498DB
+    StartBorderColor #2C3E50
+    EndColor #27AE60
+    EndBorderColor #2C3E50
+    BarColor #7F8C8D
+  }
+  
+  arrow {
+    Color #2C3E50
+    Thickness 2
+    FontColor #2C3E50
+    FontSize 9
+  }
+  
+  note {
+    BackgroundColor #FFF3E0
+    BorderColor #FF9800
+    BorderThickness 1
+    BorderStyle solid
+    FontColor #5D4037
+    FontSize 9
+    RoundCorner 8
+  }
+  
+  partition {
+    BackgroundColor #F8F9FA
+    BorderColor #3498DB
+    BorderThickness 2
+    BorderStyle solid
+    FontColor #2C3E50
+    FontSize 12
+    FontStyle bold
+    RoundCorner 10
+    Padding 10
+  }
+}
+
+title <color:#2C3E50><size:16><b>SOLIVIE HOTEL - ANALYTICS & REPORTING WORKFLOW</b></size></title>
+
+caption <color:#546E7A><i>Comprehensive data analysis and report generation system</i></caption>
+
+' ============================================
+' PHASE 1: AUTHENTICATION & ACCESS
+' ============================================
+
+|#F8FBFF|<color:#3498DB><b>🔐 SYSTEM ACCESS</b></color>|
+start
+:Administrator authenticates
+with credentials;
+
+if (Authentication valid?) then (no)
+  :Display access denied
+  with error details;
+  stop
+else (yes)
+  :Create secure session
+  with role permissions;
+  :Log access attempt
+  in security audit;
+endif
+
+:Navigate to analytics
+dashboard interface;
+
+' ============================================
+' PHASE 2: REPORT SELECTION
+' ============================================
+
+|#FFF8E1|<color:#FF9800><b>📊 REPORT CONFIGURATION</b></color>|
+:Select report category
+from predefined options;
+note right
+  <color:#2C3E50><b>Report Categories</b></color>
+  • Financial Analytics
+  • Operational Reports
+  • Guest Statistics
+  • Performance Metrics
+  • Compliance Documents
+end note
+
+:Choose specific report type
+from available templates;
+
+' ============================================
+' PHASE 3: PARAMETER SETUP
+' ============================================
+
+|#E8EAF6|<color:#3F51B5><b>⚙️ PARAMETER CONFIGURATION</b></color>|
+partition "Time Parameters" {
+  :Select reporting period
+  (date range);
+  :Choose time granularity
+  (daily/weekly/monthly);
+}
+
+partition "Filter Criteria" {
+  :Apply property filters
+  (specific hotels/locations);
+  :Set room category filters;
+  :Select guest segment filters;
+  :Apply booking channel filters;
+}
+
+partition "Data Parameters" {
+  :Set currency and
+  exchange rates;
+  :Choose metrics and
+  KPIs to include;
+  :Select comparison
+  periods if needed;
+}
+
+:Validate all selected
+parameters;
+
+if (Parameters valid?) then (no)
+  :Display validation errors
+  with specific issues;
+  :Highlight incorrect
+  or missing fields;
+  stop
+else (yes)
+  :Parameters confirmed
+  and saved;
+endif
+
+' ============================================
+' PHASE 4: DATA PROCESSING
+' ============================================
+
+|#F1F8E9|<color:#4CAF50><b>🔄 REPORT GENERATION</b></color>|
+:User initiates report
+generation process;
+:System creates processing
+job with unique ID;
+
+split
+  :Validate user permissions
+  for requested data;
+split again
+  :Check system resources
+  and availability;
+split again
+  :Queue processing job
+  in priority queue;
+end split
+
+' ============================================
+' PHASE 5: PARALLEL DATA EXTRACTION
+' ============================================
+
+|#FFEBEE|<color:#EF5350><b>📈 DATA COLLECTION</b></color>|
+fork
+  partition "<color:#2196F3>💰 REVENUE ANALYTICS</color>" #E3F2FD {
+    :Extract payment transactions
+    for selected period;
+    :Calculate revenue metrics
+    and trends;
+    :Analyze payment method
+    distribution;
+    :Compute average transaction
+    values and growth;
+  }
+fork again
+  partition "<color:#9C27B0>📅 BOOKING ANALYSIS</color>" #F3E5F5 {
+    :Retrieve booking data
+    with status details;
+    :Calculate booking conversion
+    rates and patterns;
+    :Analyze cancellation trends
+    and reasons;
+    :Compute occupancy and
+    lead time statistics;
+  }
+fork again
+  partition "<color:#FF9800>🏨 OCCUPANCY METRICS</color>" #FFF3E0 {
+    :Calculate room inventory
+    and availability;
+    :Compute occupancy rates
+    by room category;
+    :Analyze ADR and RevPAR
+    performance;
+    :Track room night
+    utilization patterns;
+  }
+fork again
+  partition "<color:#4CAF50>👥 GUEST ANALYTICS</color>" #E8F6EF {
+    :Extract guest demographic
+    and behavior data;
+    :Calculate customer lifetime
+    value metrics;
+    :Analyze loyalty program
+    participation;
+    :Track guest satisfaction
+    and feedback trends;
+  }
+fork again
+  partition "<color:#795548>📊 OPERATIONAL DATA</color>" #EFEBE9 {
+    :Collect housekeeping
+    efficiency metrics;
+    :Analyze staff performance
+    and productivity;
+    :Track maintenance and
+    facility usage;
+    :Compute operational
+    cost analysis;
+  }
+end fork
+
+note right
+  <color:#2C3E50><b>Parallel Processing</b></color>
+  • Multi-threaded execution
+  • Real-time data aggregation
+  • Performance optimization
+  • Resource balancing
+end note
+
+' ============================================
+' PHASE 6: DATA PROCESSING
+' ============================================
+
+|#F3E5F5|<color:#9C27B0><b>🔧 DATA AGGREGATION</b></color>|
+:Consolidate data from
+all parallel processes;
+:Apply business rules
+and calculations;
+:Perform data validation
+and quality checks;
+
+if (Data quality issues?) then (yes)
+  :Log data anomalies
+  and inconsistencies;
+  :Apply data cleansing
+  procedures;
+  :Generate data quality
+  report;
+else (no)
+  :Data quality confirmed
+  as satisfactory;
+endif
+
+:Calculate derived metrics
+and KPIs;
+:Generate executive summary
+with key insights;
+
+' ============================================
+' PHASE 7: VISUALIZATION
+' ============================================
+
+|#E1F5FE|<color:#039BE5><b>📊 DATA VISUALIZATION</b></color>|
+fork
+  partition "Chart Generation" {
+    :Create trend charts
+    and line graphs;
+    :Generate bar charts
+    for comparisons;
+    :Produce pie charts
+    for distributions;
+    :Build heat maps for
+    geographical data;
+  }
+fork again
+  partition "Dashboard Creation" {
+    :Design interactive
+    dashboard layout;
+    :Add filtering and
+    drill-down capabilities;
+    :Implement real-time
+    data refresh;
+    :Create executive
+    summary views;
+  }
+fork again
+  partition "Report Formatting" {
+    :Apply corporate
+    branding guidelines;
+    :Format tables and
+    data presentation;
+    :Add annotations and
+    data labels;
+    :Insert headers and
+    footers;
+  }
+end fork
+
+' ============================================
+' PHASE 8: REPORT DELIVERY
+' ============================================
+
+|#FFF3E0|<color:#FF9800><b>📤 OUTPUT DELIVERY</b></color>|
+:Display interactive report
+in web interface;
+
+if (Export required?) then (yes)
+  :Select export format
+  from available options;
+  
+  if (Format = "PDF") then (yes)
+    partition "PDF Generation" {
+      :Generate PDF document
+      with high resolution;
+      :Apply security features
+      and watermarks;
+      :Optimize file size
+      for distribution;
+      :Add digital signature
+      and timestamps;
+    }
+  else if (Format = "Excel") then (yes)
+    partition "Spreadsheet Export" {
+      :Create Excel workbook
+      with multiple sheets;
+      :Add formulas and
+      pivot tables;
+      :Include raw data
+      for further analysis;
+      :Apply formatting
+      and protection;
+    }
+  else if (Format = "Presentation") then (yes)
+    partition "Slide Deck Creation" {
+      :Generate PowerPoint
+      presentation;
+      :Create speaker notes
+      and talking points;
+      :Add animation and
+      transition effects;
+      :Include data-driven
+      insights slides;
+    }
+  else (Custom Format)
+    :Process custom export
+    based on requirements;
+  endif
+  
+  :Initiate file download
+  to local device;
+  
+  if (Email distribution?) then (yes)
+    :Send report via email
+    to specified recipients;
+    :Track delivery and
+    open rates;
+  else (no)
+    :Local download only
+    completed;
+  endif
+  
+else (no)
+  :Report available in
+  system interface only;
+  :Set access permissions
+  for other users;
+endif
+
+' ============================================
+' PHASE 9: AUDIT & COMPLIANCE
+' ============================================
+
+|#FCE4EC|<color:#EC407A><b>📋 AUDIT TRAIL</b></color>|
+:Log complete report generation
+in audit system;
+
+split
+  :Record user details
+  and access credentials;
+split again
+  :Save report parameters
+  and configuration;
+split again
+  :Store processing metrics
+  and performance data;
+split again
+  :Archive generated report
+  for compliance;
+end split
+
+:Update report usage statistics
+and access logs;
+:Generate report generation
+certificate with hash;
+
+' ============================================
+' PHASE 10: COMPLETION
+' ============================================
+
+|#F8FBFF|<color:#3498DB><b>✅ PROCESS COMPLETE</b></color>|
+:Display success confirmation
+with summary details;
+
+note right
+  <color:#2C3E50><b>Report Generation Summary</b></color>
+  • Report ID: [Unique Reference]
+  • Generation Time: [Timestamp]
+  • Processing Duration: [Time]
+  • Data Points: [Count]
+  • File Size: [Size]
+  • Status: COMPLETED ✅
+end note
+
+:Provide post-generation options:
+  • Schedule recurring reports
+  • Share with team members
+  • Create dashboard widget
+  • Set up alerts and notifications
+  • Export to other systems;
+
+stop
+
+legend bottom center
+  <color:#3498DB>█</color> ACCESS | <color:#FF9800>█</color> CONFIGURATION | <color:#3F51B5>█</color> PARAMETERS
+  <color:#4CAF50>█</color> PROCESSING | <color:#EF5350>█</color> DATA COLLECTION | <color:#9C27B0>█</color> AGGREGATION
+  <color:#039BE5>█</color> VISUALIZATION | <color:#FF9800>█</color> DELIVERY | <color:#EC407A>█</color> AUDIT
+end legend
+
+@enduml

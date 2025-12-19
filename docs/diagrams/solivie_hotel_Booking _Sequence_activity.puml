@@ -1,0 +1,354 @@
+@startuml Booking Sequence Diagram
+
+skinparam {
+  backgroundColor #FFFFFF
+  defaultFontName Segoe UI
+  defaultFontSize 10
+  shadowing true
+  shadowingIntensity 15
+  
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2C3E50
+  ParticipantBorderThickness 2
+  ParticipantFontColor #2C3E50
+  ParticipantFontSize 11
+  ParticipantFontStyle bold
+  
+  ActorBackgroundColor #E3F2FD
+  ActorBorderColor #1976D2
+  ActorFontColor #2C3E50
+  ActorFontSize 11
+  ActorFontStyle bold
+  
+  DatabaseBackgroundColor #F1F8E9
+  DatabaseBorderColor #388E3C
+  DatabaseFontColor #2C3E50
+  DatabaseFontSize 11
+  DatabaseFontStyle bold
+  
+  ArrowColor #2C3E50
+  ArrowThickness 1.5
+  ArrowFontColor #2C3E50
+  ArrowFontSize 9
+  
+  NoteBackgroundColor #FFF3E0
+  NoteBorderColor #FF9800
+  NoteFontColor #5D4037
+  NoteFontSize 9
+  NoteRoundCorner 8
+  
+  LifeLineBackgroundColor #F5F5F5
+  LifeLineBorderColor #BDBDBD
+}
+
+title <color:#2C3E50><size:16><b>SOLIVIE HOTEL - BOOKING WORKFLOW SEQUENCE DIAGRAM</b></size></title>
+
+caption <color:#546E7A><i>Complete booking process from search to confirmation</i></caption
+
+actor "Hotel Guest" as User <<Customer>>
+participant "Search Interface" as Search <<UI>>
+participant "Booking Manager" as BM <<Controller>>
+participant "Availability Service" as AC <<Service>>
+participant "Shopping Cart" as Cart <<Session>>
+participant "Payment Processor" as PP <<Service>>
+participant "Payment Gateway" as PG <<External>>
+participant "Invoice Generator" as IG <<Service>>
+participant "Email Service" as Email <<Service>>
+participant "Loyalty Program" as LP <<Service>>
+database "Hotel Database" as DB <<PostgreSQL>>
+
+' ============================================
+' PHASE 1: ROOM SEARCH & AVAILABILITY
+' ============================================
+
+User -> Search: **1. Search Criteria**
+note right of User
+  <color:#2C3E50><b>Search Parameters</b></color>
+  • Check-in/out dates
+  • Number of guests
+  • Room type preferences
+  • Special requirements
+end note
+
+activate Search
+
+Search -> AC: **2. check_availability()**\n⌚ Real-time query
+activate AC
+note right of AC
+  <color:#2C3E50><b>Availability Check</b></color>
+  • Room inventory status
+  • Maintenance schedules
+  • Overbooking prevention
+  • Rate plan validation
+end note
+
+AC -> DB: **3. QUERY available_rooms**\n📊 Database lookup
+activate DB
+
+DB --> AC: **4. RETURN rooms_list**\n✅ Available inventory
+deactivate DB
+
+AC --> Search: **5. RETURN filtered_rooms**\n📋 Sorted by relevance
+deactivate AC
+
+Search --> User: **6. DISPLAY room_options**\n🎯 Interactive results
+deactivate Search
+
+' ============================================
+' PHASE 2: CART MANAGEMENT
+' ============================================
+
+User -> Search: **7. SELECT room**\n✨ Choose preferred option
+
+User -> Cart: **8. add_to_cart()**\n🛒 Add selection
+activate Cart
+
+Cart -> DB: **9. INSERT cart_item**\n💾 Session persistence
+activate DB
+DB --> Cart: **10. CONFIRM item_saved**\n✅ Record created
+deactivate DB
+
+Cart --> User: **11. RETURN cart_update**\n📊 Updated summary
+deactivate Cart
+
+User -> Cart: **12. checkout()**\n💰 Proceed to payment
+activate Cart
+
+Cart -> BM: **13. initiate_booking()**\n🚀 Start booking process
+activate BM
+note right of BM
+  <color:#2C3E50><b>Booking Initiation</b></color>
+  • Validate cart contents
+  • Check user session
+  • Prepare booking data
+  • Generate unique reference
+end note
+
+' ============================================
+' PHASE 3: AVAILABILITY VALIDATION
+' ============================================
+
+BM -> AC: **14. validate_availability()**\n✅ Double-check rooms
+activate AC
+
+AC -> DB: **15. SELECT room_status**\n🔍 Current availability
+activate DB
+DB --> AC: **16. RETURN availability_status**\n📊 Real-time confirmation
+deactivate DB
+
+AC --> BM: **17. RETURN validation_result**\n✅ Rooms confirmed
+deactivate AC
+
+' ============================================
+' PHASE 4: BOOKING CREATION
+' ============================================
+
+BM -> BM: **18. calculate_total()**\n🧮 Price computation
+note right of BM
+  <color:#2C3E50><b>Price Calculation</b></color>
+  • Base room rate
+  • Taxes & fees
+  • Promotions/discounts
+  • Additional services
+end note
+
+BM -> DB: **19. INSERT booking_record**\n💾 Create booking
+activate DB
+DB --> BM: **20. RETURN booking_id**\n🎫 Unique reference: BKG-2023-001
+deactivate DB
+
+BM --> Cart: **21. RETURN booking_created**\n✅ Ready for payment
+deactivate BM
+
+Cart --> User: **22. REDIRECT payment_page**\n💳 Secure payment form
+deactivate Cart
+
+' ============================================
+' PHASE 5: PAYMENT PROCESSING
+' ============================================
+
+User -> PP: **23. submit_payment()**\n💳 Payment details
+note right of PP
+  <color:#2C3E50><b>Payment Details</b></color>
+  • Credit/debit card info
+  • Billing address
+  • Security verification
+  • PCI DSS compliance
+end note
+
+activate PP
+
+PP -> PG: **24. authorize_payment()**\n🔐 Secure transaction
+activate PG
+note right of PG
+  <color:#2C3E50><b>Payment Gateway</b></color>
+  • Encryption & security
+  • Fraud detection
+  • Authorization request
+  • Real-time processing
+end note
+
+PG --> PP: **25. RETURN transaction_result**\n✅ Approved: TRX-789012
+deactivate PG
+
+PP -> DB: **26. INSERT payment_record**\n💾 Save transaction
+activate DB
+DB --> PP: **27. RETURN payment_id**\n💰 Payment saved: PAY-001
+deactivate DB
+
+' ============================================
+' PHASE 6: BOOKING CONFIRMATION
+' ============================================
+
+PP -> BM: **28. confirm_booking()**\n✅ Update status
+activate BM
+
+BM -> DB: **29. UPDATE booking_status**\n📊 Set to 'CONFIRMED'
+activate DB
+DB --> BM: **30. RETURN success**\n✅ Status updated
+deactivate DB
+
+BM -> DB: **31. UPDATE room_availability**\n🚫 Mark as occupied
+activate DB
+DB --> BM: **32. RETURN success**\n✅ Room blocked
+deactivate DB
+
+deactivate BM
+
+' ============================================
+' PHASE 7: DOCUMENT GENERATION
+' ============================================
+
+PP -> IG: **33. generate_invoice()**\n📄 Create documents
+activate IG
+
+IG -> DB: **34. SELECT booking_details**\n📊 Get complete info
+activate DB
+DB --> IG: **35. RETURN full_details**\n✅ All data retrieved
+deactivate DB
+
+IG -> IG: **36. create_documents()**\n🎨 Generate PDF/HTML
+note right of IG
+  <color:#2C3E50><b>Document Creation</b></color>
+  • Invoice with hotel branding
+  • Booking confirmation letter
+  • Terms & conditions
+  • Digital signature
+end note
+
+IG -> DB: **37. INSERT invoice_record**\n💾 Save invoice
+activate DB
+DB --> IG: **38. RETURN invoice_id**\n📄 INV-2023-001
+deactivate DB
+
+IG --> PP: **39. RETURN documents**\n📦 PDF + HTML versions
+deactivate IG
+
+' ============================================
+' PHASE 8: LOYALTY PROGRAM
+' ============================================
+
+PP -> LP: **40. award_points()**\n🏆 Calculate rewards
+activate LP
+note right of LP
+  <color:#2C3E50><b>Loyalty Points</b></color>
+  • Points per dollar spent
+  • Tier-based multipliers
+  • Special promotions
+  • Reward calculations
+end note
+
+LP -> DB: **41. INSERT loyalty_transaction**\n💾 Points record
+activate DB
+DB --> LP: **42. RETURN transaction_id**\n🏆 Points awarded
+deactivate DB
+
+LP -> DB: **43. UPDATE user_points**\n📊 Balance adjustment
+activate DB
+DB --> LP: **44. RETURN new_balance**\n💰 Updated total
+deactivate DB
+
+LP --> PP: **45. RETURN confirmation**\n✅ Points processed
+deactivate LP
+
+' ============================================
+' PHASE 9: NOTIFICATIONS
+' ============================================
+
+PP -> Email: **46. send_confirmation()**\n📧 Prepare notifications
+activate Email
+
+Email -> Email: **47. prepare_email()**\n🎨 Create content
+note right of Email
+  <color:#2C3E50><b>Email Components</b></color>
+  • Personalized greeting
+  • Booking details table
+  • Hotel information
+  • Attachments (PDF invoice)
+  • Mobile-friendly design
+end note
+
+Email -> User: **48. SEND confirmation_email**\n📨 Delivery to guest
+note right of Email
+  <color:#2C3E50><b>Email Contents</b></color>
+  • Booking confirmation
+  • Check-in instructions
+  • Hotel amenities guide
+  • Contact information
+  • Cancellation policy
+end note
+
+Email --> PP: **49. RETURN delivery_status**\n✅ Email queued
+deactivate Email
+
+' ============================================
+' PHASE 10: COMPLETION
+' ============================================
+
+PP --> User: **50. DISPLAY confirmation**\n🎉 Booking complete!
+note right of PP
+  <color:#2C3E50><b>Confirmation Display</b></color>
+  • Booking reference number
+  • Room assignment details
+  • Check-in/out times
+  • Payment receipt
+  • Next steps
+end note
+
+deactivate PP
+
+' ============================================
+' SUMMARY NOTES
+' ============================================
+
+note over User, DB
+  <color:#2C3E50><b>Process Summary</b></size></color>
+  
+  <b>⏱️ Duration:</b> 2-5 seconds real-time
+  <b>📊 Transactions:</b> 15+ database operations
+  <b>🔗 Services:</b> 8+ system integrations
+  <b>✅ Outcome:</b> Confirmed booking with all documents
+  
+  <b>Security Features:</b>
+  • PCI DSS compliant payment processing
+  • Data encryption at rest and in transit
+  • Audit trail for all transactions
+  • Fraud detection mechanisms
+end note
+
+legend right
+  | <b>Component Type</b> | <b>Color</b> |
+  | Customer/Actor | <color:#1976D2>█</color> |
+  | User Interface | <color:#2C3E50>█</color> |
+  | Controller/Manager | <color:#D32F2F>█</color> |
+  | Service Layer | <color:#388E3C>█</color> |
+  | External System | <color:#FF9800>█</color> |
+  | Database | <color:#7B1FA2>█</color> |
+  | **Status** | **Symbol** |
+  | Success | ✅ |
+  | Data Storage | 💾 |
+  | External Call | 🔗 |
+  | Calculation | 🧮 |
+end legend
+
+@enduml
