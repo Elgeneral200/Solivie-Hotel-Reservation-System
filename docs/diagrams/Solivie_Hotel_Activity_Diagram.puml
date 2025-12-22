@@ -1,0 +1,1008 @@
+@startuml
+'==============================================================================
+' PROJECT: Solivie Hotel Management System
+' DIAGRAM: Complete Activity Diagram - Business Process Flows
+' VERSION: 1.0
+' DATE: December 19, 2025
+'==============================================================================
+' DEVELOPMENT TEAM - Solivie Dev
+' 1. Muhammed Fathi Kamal
+' 2. Mohamed Elsayed Abdelaziz
+' 3. Salma Abdelhamid Ahmed
+' 4. Dai Ehab Mohamed Reda
+' 5. Shaza Mohammed El Said
+'==============================================================================
+
+!define CAPTION Solivie Hotel Management System - Complete Business Process Flow
+
+title CAPTION\n<size:11>End-to-End Activity Diagram - Guest Operations, Admin Functions & System Automation</size>
+
+'==============================================================================
+' PROFESSIONAL ENTERPRISE STYLING
+'==============================================================================
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+skinparam ArrowThickness 2
+
+skinparam activity {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    BorderThickness 2
+    FontSize 10
+    FontColor #2C3E50
+    FontStyle bold
+    ArrowColor #34495E
+    DiamondBackgroundColor #FFF9E6
+    DiamondBorderColor #8B7355
+    DiamondFontColor #2C3E50
+    StartColor #27AE60
+    EndColor #C0392B
+    BarColor #34495E
+}
+
+skinparam decision {
+    BackgroundColor #FFF3CD
+    BorderColor #856404
+    BorderThickness 2
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+skinparam partition {
+    BackgroundColor #F8F9FA
+    BorderColor #2C3E50
+    BorderThickness 2.5
+    FontSize 11
+    FontStyle bold
+    FontColor #1A252F
+}
+
+skinparam note {
+    BackgroundColor #E8F6F3
+    BorderColor #16A085
+    BorderThickness 2
+    FontSize 9
+    FontColor #2C3E50
+}
+
+'==============================================================================
+' WORKFLOW START
+'==============================================================================
+start
+
+'==============================================================================
+' MODULE 1: GUEST OPERATIONS & AUTHENTICATION
+'==============================================================================
+partition "**MODULE 1: Guest Operations & User Authentication**" #E8F8F5 {
+    :User Visits Website Landing Page;
+    
+    :Display Homepage Content;
+    
+    if (User Authenticated?) then (No)
+        if (Want to Register New Account?) then (Yes)
+            :Click Register Button;
+            
+            :Display Registration Form;
+            
+            :Fill Registration Information;
+            
+            :Submit Registration Form;
+            
+            if (Validate Form Data?) then (Invalid)
+                :Display Validation Errors;
+                stop
+            else (Valid)
+                :Hash Password Using Secure Algorithm;
+                :Create User Account Record;
+                :Persist Data to Database;
+                :Generate Email Verification Token;
+                :Send Verification Email to User;
+                :Display Success Message;
+            endif
+        endif
+        
+        :Click Login Button;
+        
+        :Display Login Form;
+        
+        :Enter Login Credentials;
+        
+        :Submit Login Request;
+        
+        if (Valid Credentials?) then (Invalid)
+            :Display Error Message;
+            
+            if (Forgot Password Option?) then (Yes)
+                :Click Forgot Password Link;
+                :Display Password Reset Form;
+                :Enter Registered Email Address;
+                :Validate Email Exists in System;
+                :Generate Password Reset Token;
+                :Send Reset Link Email;
+                :Display Confirmation;
+                stop
+            else (No)
+                stop
+            endif
+        else (Valid)
+            :Authenticate User Credentials;
+            :Generate Unique Session Token;
+            :Store Session in Database;
+            :Set Session Cookie;
+            :Log Authentication Activity;
+        endif
+    else (Yes - Already Authenticated)
+        :Retrieve Active User Session;
+        :Validate Session Token;
+        
+        if (Session Expired or Invalid?) then (Yes)
+            :Clear Invalid Session;
+            :Remove Session Cookie;
+            :Redirect to Login Page;
+            stop
+        endif
+    endif
+    
+    :Load User Dashboard;
+    :Display Personalized Welcome Message;
+}
+
+'==============================================================================
+' MODULE 2: ROOM SEARCH & FILTERING ENGINE
+'==============================================================================
+partition "**MODULE 2: Room Search & Advanced Filtering**" #EBF5FB {
+    :Navigate to Search Rooms Page;
+    
+    :Display Search Interface;
+    
+    :Enter Search Criteria;
+    
+    if (Valid Date Range?) then (Invalid)
+        :Display Date Validation Errors;
+        :Re-enter Valid Dates;
+    else (Valid)
+        :Calculate Number of Nights;
+        :Calculate Booking Duration;
+    endif
+    
+    :Click Search Button;
+    
+    :Execute Search Query;
+    
+    fork
+        :Query Available Rooms from Database;
+    fork again
+        :Check Booking Conflicts;
+    fork again
+        :Apply Capacity Filter;
+    end fork
+    
+    :Compile Search Results;
+    
+    if (Apply Advanced Filters?) then (Yes)
+        :Display Advanced Filter Panel;
+        
+        :User Selects Filter Criteria;
+        
+        fork
+            :Apply Price Range Filter;
+        fork again
+            :Apply Amenities Filter;
+        fork again
+            :Apply View Type Filter;
+        fork again
+            :Apply Floor Number Filter;
+        fork again
+            :Apply Room Type Filter;
+        end fork
+        
+        :Combine All Filter Results;
+        :Apply AND Logic to Filters;
+    endif
+    
+    :Calculate Dynamic Pricing;
+    
+    :Display Available Rooms Grid;
+    
+    if (Rooms Found?) then (No Results)
+        :Display No Results Message;
+        stop
+    else (Results Available)
+        :Browse Available Room Options;
+    endif
+}
+
+'==============================================================================
+' MODULE 3: SHOPPING CART MANAGEMENT
+'==============================================================================
+partition "**MODULE 3: Shopping Cart Management System**" #F4ECF7 {
+    if (Multiple Rooms Required?) then (Yes)
+        repeat
+            :Select Room from Results;
+            
+            :Display Detailed Room Information;
+            
+            :Click "Add to Cart" Button;
+            
+            :Validate Room Availability;
+            
+            if (Room Still Available?) then (Yes)
+                :Add Room to Shopping Cart;
+                :Store Cart Item in Session;
+                :Calculate Cart Item Subtotal;
+                :Update Cart Count Badge;
+                :Display Success Notification;
+            else (No)
+                :Display Unavailability Alert;
+            endif
+            
+        repeat while (Add More Rooms to Cart?) is (Yes)
+        ->No;
+        
+        :Navigate to Shopping Cart Page;
+        
+        :Display All Cart Items;
+        
+        if (Modify Cart Contents?) then (Yes)
+            :Select Items to Remove;
+            :Remove Selected Items from Cart;
+            :Recalculate Cart Total;
+            :Display Updated Cart;
+        endif
+        
+        :Calculate Cart Summary;
+        
+    else (No - Single Room)
+        :Select Single Room;
+        :View Detailed Room Information;
+        :Proceed Directly to Checkout;
+    endif
+}
+
+'==============================================================================
+' MODULE 4: CHECKOUT & PAYMENT PROCESSING
+'==============================================================================
+partition "**MODULE 4: Checkout & Payment Processing**" #FEF9E7 {
+    :Click "Proceed to Checkout" Button;
+    
+    :Display Checkout Summary Page;
+    
+    :Review Personal Information;
+    
+    if (Update Profile Information?) then (Yes)
+        :Enable Profile Edit Mode;
+        :Modify Profile Fields;
+        :Validate Updated Information;
+        :Save Profile Updates;
+    endif
+    
+    if (Add Special Requests?) then (Yes)
+        :Display Special Requests Form;
+        
+        :Enter Special Requests;
+        
+        :Save Special Requests to Booking;
+    endif
+    
+    if (Have Promotional Code?) then (Yes)
+        :Display Promo Code Input Field;
+        :Enter Promotional Code;
+        :Click "Apply Code" Button;
+        
+        :Validate Promotional Code;
+        
+        if (Valid Promo Code?) then (Yes)
+            :Apply Discount to Booking;
+            
+            :Recalculate Total Amount;
+            
+            :Display Discount Applied Message;
+        else (No)
+            :Display Invalid Promo Code Error;
+        endif
+    endif
+    
+    :Display Final Amount Payable;
+    
+    :Display Payment Form;
+    
+    :Enter Payment Details;
+    
+    :Submit Payment Information;
+    
+    :Validate Payment Data;
+    
+    if (Valid Payment Data?) then (Invalid)
+        :Display Payment Validation Errors;
+        :Re-enter Correct Payment Details;
+    else (Valid)
+        :Click "Pay & Confirm Booking" Button;
+        
+        :Display Processing Indicator;
+        
+        fork
+            :Establish Secure Connection to Payment Gateway;
+            :Encrypt Sensitive Card Data;
+            :Send Transaction Request to Gateway;
+            
+            :Payment Gateway Processes Transaction;
+            
+            if (Payment Authorized by Gateway?) then (Declined)
+                :Payment Transaction Failed;
+                
+                :Capture Failure Details;
+                
+                :Rollback All Transaction Changes;
+                :Clear Pending Booking Records;
+                :Display Payment Failed Message;
+                :Offer Retry or Alternative Payment;
+                stop
+            else (Approved)
+                :Payment Successfully Authorized;
+                :Receive Unique Transaction ID;
+                :Store Card Last 4 Digits Only;
+                :Mark Payment as Completed;
+            endif
+            
+        fork again
+            :Begin Booking Creation Process;
+            
+            repeat :For Each Room in Cart;
+                :Create Individual Booking Record;
+                
+                :Persist Booking to Database;
+                :Link Booking to Payment Record;
+                
+            repeat while (More Rooms in Cart?) is (Yes)
+            ->No;
+            
+            :Generate All Booking References;
+            
+            :Update Room Status;
+            
+        fork again
+            :Create Payment Record;
+            
+            :Persist Payment to Database;
+            
+        fork again
+            :Create Audit Log Entry;
+            
+            :Persist Audit Log;
+            
+        end fork
+        
+        :Commit All Database Transactions;
+        :Confirm Transaction Success;
+    endif
+}
+
+'==============================================================================
+' MODULE 5: POST-BOOKING AUTOMATION
+'==============================================================================
+partition "**MODULE 5: Post-Booking Automation & Notifications**" #D5F4E6 {
+    fork
+        :Generate Invoice PDF Document;
+        
+        :Save Invoice PDF to File Storage;
+        :Create Database Link to Booking;
+        
+    fork again
+        :Prepare Booking Confirmation Email;
+        :Load HTML Email Template;
+        
+        :Populate Template with Data;
+        
+        :Establish SMTP Connection;
+        :Send Booking Confirmation Email;
+        
+        :Create Email Log Entry;
+        
+    fork again
+        :Prepare Payment Receipt Email;
+        :Load Receipt Email Template;
+        
+        :Populate Receipt Template;
+        
+        :Attach Invoice PDF to Email;
+        :Send Payment Receipt Email;
+        
+        :Create Email Log Entry;
+        
+    end fork
+    
+    :Clear Shopping Cart Contents;
+    :Remove All Session Cart Data;
+    
+    :Display Booking Confirmation Page;
+    
+    :Redirect to My Bookings Page;
+}
+
+'==============================================================================
+' MODULE 6: USER PROFILE MANAGEMENT
+'==============================================================================
+partition "**MODULE 6: User Profile Management**" #EAF2F8 {
+    if (Access Profile Management?) then (Yes)
+        :Navigate to My Profile Page;
+        
+        :Display User Information;
+        
+        if (Update Profile Information?) then (Yes)
+            :Enable Profile Edit Mode;
+            
+            :Modify Profile Fields;
+            
+            if (Upload New ID Document?) then (Yes)
+                :Display ID Upload Form;
+                
+                :Select Document Type;
+                
+                :Enter ID Document Number;
+                :Enter ID Expiry Date;
+                :Upload Document Scan/Photo;
+                
+                :Validate ID Format;
+                
+                if (Valid ID Document?) then (Yes)
+                    :Save ID Information;
+                    :Set Verification Status: Pending;
+                    :Notify Admin Team for Verification;
+                    :Display Pending Verification Message;
+                else (No)
+                    :Display ID Validation Error;
+                endif
+            endif
+            
+            :Click Save Profile Changes;
+            :Validate All Modified Fields;
+            :Persist Profile Updates;
+            :Log Profile Update Activity;
+            :Display Success Message;
+        endif
+        
+        if (Change Account Password?) then (Yes)
+            :Display Password Change Form;
+            
+            :Enter Current Password;
+            :Enter New Password;
+            :Confirm New Password;
+            
+            :Submit Password Change;
+            
+            :Validate Current Password;
+            
+            if (Current Password Correct?) then (Yes)
+                :Validate New Password Strength;
+                
+                if (Strong Password?) then (Yes)
+                    :Hash New Password;
+                    :Update Password in Database;
+                    :Invalidate All Active Sessions;
+                    :Log Password Change Activity;
+                    :Send Security Alert Email;
+                    :Redirect to Login Page;
+                else (No)
+                    :Display Password Requirements;
+                endif
+            else (No)
+                :Display Error;
+            endif
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 7: MY BOOKINGS MANAGEMENT
+'==============================================================================
+partition "**MODULE 7: My Bookings Management Portal**" #FCF3CF {
+    if (Access My Bookings?) then (Yes)
+        :Navigate to My Bookings Page;
+        
+        :Query User Bookings from Database;
+        
+        :Display Bookings List;
+        
+        if (View Booking Details?) then (Yes)
+            :Select Specific Booking;
+            
+            :Display Complete Booking Information;
+        endif
+        
+        if (Download Invoice?) then (Yes)
+            :Click Download Invoice Button;
+            :Retrieve Invoice PDF from Storage;
+            :Generate Invoice if Not Exists;
+            :Download to User Device;
+            :Log Invoice Download Activity;
+        endif
+        
+        if (Cancel Booking?) then (Yes)
+            :Click Cancel Booking Button;
+            
+            :Display Cancellation Policy;
+            
+            :Display Cancellation Reason Form;
+            :Enter Cancellation Reason (Optional);
+            
+            :Click Confirm Cancellation;
+            
+            if (User Confirms Cancellation?) then (Yes)
+                :Calculate Refund Amount;
+                
+                :Update Booking Status: "Cancelled";
+                :Record Cancellation Reason;
+                :Record Cancellation Timestamp;
+                :Update Room Status: "Available";
+                :Clear Date Blocks on Calendar;
+                
+                if (Eligible for Refund?) then (Yes)
+                    :Initiate Refund Process;
+                    
+                    :Send Refund Confirmation Email;
+                endif
+                
+                :Send Cancellation Confirmation Email;
+                
+                :Log Cancellation Activity;
+                :Display Cancellation Success Message;
+                
+            else (No)
+                :Return to Booking Details;
+            endif
+        endif
+        
+        if (Write Review for Booking?) then (Yes)
+            :Check Booking Eligibility for Review;
+            
+            if (Can Write Review?) then (Yes)
+                :Display Review Submission Form;
+                
+                :Select Star Rating (1-5);
+                :Enter Review Title;
+                :Write Detailed Comment;
+                
+                :Submit Review;
+                
+                :Validate Review Submission;
+                
+                if (Valid Review?) then (Yes)
+                    :Create Review Record;
+                    
+                    :Persist Review to Database;
+                    :Notify Admin for Review Verification;
+                    :Recalculate Room Average Rating;
+                    :Display Thank You Message;
+                else (No)
+                    :Display Review Validation Errors;
+                endif
+            else (No)
+                :Display Cannot Review Message;
+            endif
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 8: ADMIN - ROOM MANAGEMENT
+'==============================================================================
+partition "**MODULE 8: Admin - Room Management Module**" #FADBD8 {
+    if (Admin Authenticated?) then (Yes)
+        :Access Admin Dashboard;
+        
+        :Navigate to Room Management Section;
+        
+        :Display All Rooms Table;
+        
+        if (Add New Room?) then (Yes)
+            :Click Add New Room Button;
+            
+            :Display Room Creation Form;
+            
+            :Fill Room Information;
+            
+            :Submit Room Form;
+            
+            :Validate Room Data;
+            
+            if (Valid Room Data?) then (Yes)
+                :Upload Room Images;
+                
+                :Create New Room Record;
+                :Set Initial Status: "Available";
+                :Persist to Database;
+                :Log Room Creation Activity;
+                :Display Success Message;
+            else (No)
+                :Display Validation Errors;
+            endif
+        endif
+        
+        if (Edit Existing Room?) then (Yes)
+            :Select Room to Edit;
+            :Load Current Room Data;
+            :Enable Edit Mode;
+            
+            :Update Room Fields;
+            
+            :Submit Changes;
+            :Validate Updated Data;
+            :Persist Changes to Database;
+            :Log Room Update Activity;
+            :Display Success Message;
+        endif
+        
+        if (Delete Room?) then (Yes)
+            :Select Room to Delete;
+            
+            :Check for Active Bookings;
+            
+            if (Has Active or Future Bookings?) then (Yes)
+                :Display Cannot Delete Error;
+            else (No)
+                :Display Deletion Confirmation Dialog;
+                :Confirm Deletion;
+                
+                :Perform Soft Delete;
+                
+                :Log Room Deletion Activity;
+                :Display Success Message;
+            endif
+        endif
+        
+        if (Change Room Status?) then (Yes)
+            :Select Room;
+            
+            :Display Status Options;
+            
+            :Choose New Status;
+            :Confirm Status Change;
+            :Update Room Status in Database;
+            :Log Status Change Activity;
+            :Display Success Message;
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 9: ADMIN - USER MANAGEMENT
+'==============================================================================
+partition "**MODULE 9: Admin - User Management Module**" #E8DAEF {
+    if (Manage Users?) then (Yes)
+        :Navigate to User Management Section;
+        
+        :Display All Users Table;
+        
+        if (Search for Users?) then (Yes)
+            :Display Search Interface;
+            
+            :Enter Search Criteria;
+            
+            :Execute Search Query;
+            :Display Filtered Results;
+        endif
+        
+        if (View User Details?) then (Yes)
+            :Select User from List;
+            
+            :Display Complete User Profile;
+        endif
+        
+        if (Verify ID Documents?) then (Yes)
+            :Select User with Pending Verification;
+            
+            :Display ID Document Information;
+            
+            :Review ID Documentation;
+            :Verify Against Database;
+            
+            if (ID Valid and Authentic?) then (Yes)
+                :Mark ID as Verified;
+                :Update User Verification Status;
+                :Set id_verified: True;
+                :Send Verification Success Email;
+                :Log Verification Activity;
+            else (No)
+                :Mark ID as Rejected;
+                :Enter Rejection Reason;
+                :Send Rejection Email;
+                :Log Rejection Activity;
+            endif
+        endif
+        
+        if (Deactivate User Account?) then (Yes)
+            :Select User to Deactivate;
+            :Display Deactivation Confirmation;
+            :Enter Deactivation Reason;
+            :Confirm Action;
+            
+            :Set Account Status: "Inactive";
+            :Cancel All Active Sessions;
+            :Prevent Future Logins;
+            :Send Account Deactivation Email;
+            :Log Deactivation Activity;
+            :Display Success Message;
+        endif
+        
+        if (Check ID Expiry Alerts?) then (Yes)
+            :Query Users with Expiring IDs;
+            
+            :Display Alert Dashboard;
+            
+            :Send Automated Reminder Emails;
+            :Log Reminder Activity;
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 10: ADMIN - BOOKING MANAGEMENT
+'==============================================================================
+partition "**MODULE 10: Admin - Booking Management Module**" #D1F2EB {
+    if (Manage All Bookings?) then (Yes)
+        :Navigate to Booking Management;
+        
+        :Display All Bookings Table;
+        
+        if (Apply Booking Filters?) then (Yes)
+            :Display Filter Panel;
+            
+            :Apply Selected Filters;
+            :Display Filtered Results;
+        endif
+        
+        if (Search Specific Booking?) then (Yes)
+            :Display Search Interface;
+            
+            :Enter Search Criteria;
+            
+            :Execute Search Query;
+            :Display Search Results;
+        endif
+        
+        if (View Booking Details?) then (Yes)
+            :Select Booking from List;
+            
+            :Display Complete Booking Information;
+        endif
+        
+        if (Modify Booking?) then (Yes)
+            :Select Booking to Modify;
+            :Enable Modification Mode;
+            
+            :Update Booking Details;
+            
+            :Validate Modifications;
+            :Recalculate Total Amount;
+            
+            if (Price Changed?) then (Yes)
+                :Process Payment Adjustment;
+            endif
+            
+            :Save Booking Modifications;
+            :Send Update Notification Email;
+            :Log Modification Activity;
+            :Display Success Message;
+        endif
+        
+        if (Cancel Booking - Admin?) then (Yes)
+            :Select Booking to Cancel;
+            :Display Cancellation Form;
+            :Enter Admin Cancellation Reason;
+            :Calculate Refund Amount;
+            :Confirm Cancellation;
+            
+            :Process Booking Cancellation;
+            :Update Booking Status;
+            :Release Room Availability;
+            :Process Refund if Applicable;
+            :Send Cancellation Notification;
+            :Log Admin Cancellation Activity;
+            :Display Success Message;
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 11: CHECK-IN PROCESS
+'==============================================================================
+partition "**MODULE 11: Guest Check-In Process**" #D5F4E6 {
+    if (Guest Arrives for Check-In?) then (Yes)
+        :Admin Navigates to Check-In Module;
+        
+        :Display Today's Expected Arrivals;
+        
+        :Select Arriving Guest from List;
+        
+        :Display Booking Details;
+        
+        :Request Guest Identity Verification;
+        
+        :Verify Guest Identity;
+        
+        if (ID Successfully Verified?) then (No)
+            :Request Valid Identification;
+            :Display Verification Error;
+            :Log Failed Verification Attempt;
+            :Notify Supervisor;
+            stop
+        else (Yes)
+            :Mark ID as Verified;
+            
+            :Review Special Requests;
+            
+            :Confirm Final Room Assignment;
+            
+            :Click "Check In Guest" Button;
+            
+            fork
+                :Update Booking Record;
+                
+            fork again
+                :Update Room Status;
+                
+            fork again
+                :Log Check-In Activity;
+                
+            fork again
+                :Generate Room Key Card;
+                :Print Welcome Package;
+                
+            end fork
+            
+            :Display Check-In Success;
+            
+            :Send Welcome Email;
+        endif
+    endif
+}
+
+'==============================================================================
+' MODULE 12: CHECK-OUT PROCESS
+'==============================================================================
+partition "**MODULE 12: Guest Check-Out Process**" #D5F4E6 {
+    if (Guest Departs for Check-Out?) then (Yes)
+        :Admin Navigates to Check-Out Module;
+        
+        :Display Today's Expected Departures;
+        
+        :Select Departing Guest from List;
+        
+        :Display Check-Out Summary;
+        
+        :Verify Additional Charges;
+        
+        if (Additional Charges Exist?) then (Yes)
+            :Display Charge Breakdown;
+            :Calculate Additional Amount;
+            :Confirm Charges with Guest;
+            
+            :Process Additional Payment;
+            :Update Payment Record;
+            :Generate Receipt for Additional Charges;
+        endif
+        
+        :Calculate Final Bill;
+        
+        :Conduct Room Inspection;
+        
+        :Verify Room Condition;
+        
+        if (Room Damaged or Items Missing?) then (Yes)
+            :Document Damage Details;
+            :Take Photographic Evidence;
+            :Calculate Damage Charge;
+            :Discuss with Guest;
+            :Process Damage Payment;
+            :Update Damage Report;
+        endif
+        
+        :Click "Check Out Guest" Button;
+        
+        fork
+            :Update Booking Record;
+            
+        fork again
+            :Update Room Status;
+            
+        fork again
+            :Generate Final Invoice;
+            
+        fork again
+            :Log Check-Out Activity;
+            
+        end fork
+        
+        :Print Final Invoice;
+        :Provide Invoice to Guest;
+        
+        :Send Thank You Email;
+        
+        :Display Check-Out Success Message;
+        
+        :Update Hotel Occupancy Statistics;
+    endif
+}
+
+'==============================================================================
+' MODULE 13: ADMIN - DASHBOARD & ANALYTICS
+'==============================================================================
+partition "**MODULE 13: Admin - Dashboard & Business Analytics**" #D1F2EB {
+    if (Access Admin Dashboard?) then (Yes)
+        :Navigate to Admin Dashboard;
+        
+        fork
+            :Calculate Revenue Statistics;
+            
+        fork again
+            :Calculate Occupancy Metrics;
+            
+        fork again
+            :Calculate Booking Statistics;
+            
+        fork again
+            :Retrieve Recent Activities;
+            
+        fork again
+            :Calculate User Statistics;
+            
+        end fork
+        
+        :Display Executive Dashboard;
+        
+        if (Generate Business Reports?) then (Yes)
+            :Display Report Generation Interface;
+            
+            :Select Report Type;
+            
+            :Select Report Date Range;
+            
+            :Select Export Format;
+            
+            :Click Generate Report;
+            
+            :Execute Report Generation;
+            
+            if (Export Format = PDF?) then (Yes)
+                :Generate PDF Report;
+                
+            else (Excel/CSV)
+                :Generate Excel/CSV Report;
+            endif
+            
+            :Download Generated Report;
+            :Log Report Generation Activity;
+            :Display Download Success Message;
+        endif
+    endif
+}
+
+'==============================================================================
+' CONTINUOUS SYSTEM OPERATIONS
+'==============================================================================
+:System Continues Normal Operations;
+
+stop
+
+'==============================================================================
+' LEGEND & DOCUMENTATION
+'==============================================================================
+legend right
+  |= **Symbol** |= **Meaning** |
+  | ● | Start Point |
+  | ● | End Point |
+  | ▭ | Activity/Action |
+  | ◇ | Decision Point |
+  | ║ | Parallel Processing |
+  | ↻ | Loop/Repeat |
+  
+  **Diagram Coverage:** Complete Business Processes
+  **Modules Covered:** 13 Major Functional Modules
+  **Last Updated:** December 19, 2025
+  **Solivie Dev Team**
+endlegend
+
+footer Solivie Hotel Management System | Development Team: Muhammed Fathi Kamal, Mohamed Elsayed Abdelaziz, Salma Abdelhamid Ahmed, Dai Ehab Mohamed Reda, Shaza Mohammed El Said | © 2025
+
+@enduml

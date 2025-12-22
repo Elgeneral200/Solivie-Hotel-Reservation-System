@@ -1,0 +1,569 @@
+@startuml
+'==============================================================================
+' PROJECT: Solivie Hotel Management System
+' DIAGRAM: Complete Use Case Diagram - System Architecture
+' VERSION: 1.0
+' DATE: December 19, 2025
+'==============================================================================
+' DEVELOPMENT TEAM - Solivie Dev
+' 1. Muhammed Fathi Kamal
+' 2. Mohamed Elsayed Abdelaziz
+' 3. Salma Abdelhamid Ahmed
+' 4. Dai Ehab Mohamed Reda
+' 5. Shaza Mohammed El Said
+'==============================================================================
+
+!define CAPTION Solivie Hotel Management System - Enterprise Use Case Architecture
+
+title CAPTION\n<size:11>Complete Functional Coverage - All System Actors & Use Cases</size>
+
+left to right direction
+
+'==============================================================================
+' PROFESSIONAL ENTERPRISE STYLING
+'==============================================================================
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 10
+
+skinparam usecase {
+    BackgroundColor #FFFFFF
+    BorderColor #2C3E50
+    BorderThickness 2
+    ArrowColor #34495E
+    ArrowThickness 2
+    FontSize 10
+    FontColor #2C3E50
+    FontStyle bold
+}
+
+skinparam package {
+    BorderColor #34495E
+    BorderThickness 2
+    FontSize 11
+    FontStyle bold
+    FontColor #1A252F
+}
+
+skinparam actor {
+    BorderColor #2C3E50
+    BorderThickness 2
+    FontSize 10
+    FontStyle bold
+}
+
+skinparam note {
+    BackgroundColor #FFF9E6
+    BorderColor #8B7355
+    BorderThickness 2
+    FontSize 9
+}
+
+'==============================================================================
+' SYSTEM ACTORS DEFINITION
+'==============================================================================
+actor "Guest User\n(Visitor)" as Guest #98D8C8
+actor "Registered User\n(Customer)" as User #6CB4E7
+actor "System Administrator\n(Admin)" as Admin #F39C6B
+actor "Background System\n(Automation)" as System #95A5A6
+actor "Payment Gateway\n(External API)" as PaymentGW #F7DC6F
+actor "Email Service\n(SMTP)" as EmailSvc #BB8FCE
+actor "Database Server\n(Persistent Storage)" as DB #EC7063
+
+'==============================================================================
+' MODULE 1: GUEST OPERATIONS
+'==============================================================================
+package "Guest Operations Module" #E8F8F5 {
+    usecase "UC01: View Homepage" as UC01
+    usecase "UC02: Browse Rooms Catalog" as UC02
+    usecase "UC03: View Detailed Room Information" as UC03
+    usecase "UC04: Register New Account" as UC04
+    usecase "UC05: User Authentication Login" as UC05
+    usecase "UC06: Initiate Password Recovery" as UC06
+}
+
+'==============================================================================
+' MODULE 2: AUTHENTICATION & SESSION MANAGEMENT
+'==============================================================================
+package "Authentication & Session Management" #FEF9E7 {
+    usecase "UC07: Validate User Credentials" as UC07
+    usecase "UC08: Establish User Session" as UC08
+    usecase "UC09: Terminate Session Logout" as UC09
+    usecase "UC10: Execute Password Reset" as UC10
+    usecase "UC11: Modify Account Password" as UC11
+}
+
+'==============================================================================
+' MODULE 3: ROOM SEARCH & AVAILABILITY ENGINE
+'==============================================================================
+package "Room Search & Availability Engine" #EBF5FB {
+    usecase "UC12: Search Available Rooms" as UC12
+    usecase "UC13: Apply Advanced Filters\n(Price Range, Amenities,\nView Type, Capacity)" as UC13
+    usecase "UC14: Verify Room Availability\nfor Date Range" as UC14
+    usecase "UC15: Display Availability Calendar\nwith Real-Time Status" as UC15
+    usecase "UC16: Calculate Dynamic Room Pricing" as UC16
+    usecase "UC17: Display Comprehensive\nRoom Amenities" as UC17
+}
+
+'==============================================================================
+' MODULE 4: SHOPPING CART MANAGEMENT
+'==============================================================================
+package "Shopping Cart Management System" #F4ECF7 {
+    usecase "UC18: Add Selected Room to Cart" as UC18
+    usecase "UC19: View Shopping Cart Summary" as UC19
+    usecase "UC20: Remove Room from Cart" as UC20
+    usecase "UC21: Update Cart Item Quantities" as UC21
+    usecase "UC22: Clear All Cart Items" as UC22
+    usecase "UC23: Calculate Total Cart Amount" as UC23
+}
+
+'==============================================================================
+' MODULE 5: BOOKING OPERATIONS
+'==============================================================================
+package "Booking & Reservation Operations" #F3E5F5 {
+    usecase "UC24: Initiate Checkout Process" as UC24
+    usecase "UC25: Enter Guest Information\nand Contact Details" as UC25
+    usecase "UC26: Submit Special Requests\nand Preferences" as UC26
+    usecase "UC27: Apply Promotional Code" as UC27
+    usecase "UC28: Validate Promo Code\nEligibility" as UC28
+    usecase "UC29: Execute Payment Processing" as UC29
+    usecase "UC30: Create Confirmed Booking\nRecord" as UC30
+    usecase "UC31: Generate Unique Booking\nReference Number" as UC31
+    usecase "UC32: Issue Booking Confirmation" as UC32
+}
+
+'==============================================================================
+' MODULE 6: PAYMENT PROCESSING
+'==============================================================================
+package "Payment Processing & Transaction Management" #FADBD8 {
+    usecase "UC33: Validate Payment Card Details" as UC33
+    usecase "UC34: Process Financial Transaction\nvia Gateway" as UC34
+    usecase "UC35: Record Payment in System" as UC35
+    usecase "UC36: Generate Transaction\nIdentifier" as UC36
+    usecase "UC37: Process Refund Request" as UC37
+}
+
+'==============================================================================
+' MODULE 7: USER PROFILE MANAGEMENT
+'==============================================================================
+package "User Profile & Account Management" #EAF2F8 {
+    usecase "UC38: View Personal Profile" as UC38
+    usecase "UC39: Update Profile Information" as UC39
+    usecase "UC40: Upload Identity Documents\n(National ID/Passport)" as UC40
+    usecase "UC41: Modify Contact Information" as UC41
+    usecase "UC42: Verify User Identity" as UC42
+    usecase "UC43: View Account Status\nand Verification Level" as UC43
+}
+
+'==============================================================================
+' MODULE 8: USER BOOKING MANAGEMENT
+'==============================================================================
+package "Customer Booking Management Portal" #FEF5E7 {
+    usecase "UC44: View Personal Bookings List" as UC44
+    usecase "UC45: Access Detailed Booking\nInformation" as UC45
+    usecase "UC46: Download Booking Invoice\n(PDF)" as UC46
+    usecase "UC47: Cancel Existing Booking" as UC47
+    usecase "UC48: Submit Refund Request" as UC48
+    usecase "UC49: View Complete Booking History" as UC49
+}
+
+'==============================================================================
+' MODULE 9: REVIEW & RATING SYSTEM
+'==============================================================================
+package "Review & Rating Management System" #E8F6F3 {
+    usecase "UC50: Compose Room Review" as UC50
+    usecase "UC51: Submit Room Rating\n(1-5 Stars)" as UC51
+    usecase "UC52: Edit Existing Review" as UC52
+    usecase "UC53: Delete Personal Review" as UC53
+    usecase "UC54: Browse All Room Reviews" as UC54
+    usecase "UC55: Moderate and Verify Reviews\n(Admin Only)" as UC55
+}
+
+'==============================================================================
+' MODULE 10: ADMIN ROOM MANAGEMENT
+'==============================================================================
+package "Administrative Room Management" #FCF3CF {
+    usecase "UC56: View Complete Room Inventory" as UC56
+    usecase "UC57: Add New Room to System" as UC57
+    usecase "UC58: Edit Room Details\nand Configuration" as UC58
+    usecase "UC59: Remove Room from System" as UC59
+    usecase "UC60: Update Room Status\n(Available/Occupied/\nMaintenance/Reserved)" as UC60
+    usecase "UC61: Upload Room Photography\nand Media" as UC61
+    usecase "UC62: Configure Room Amenities\nand Features" as UC62
+    usecase "UC63: Set Dynamic Room Pricing\nand Rate Plans" as UC63
+}
+
+'==============================================================================
+' MODULE 11: ADMIN USER MANAGEMENT
+'==============================================================================
+package "Administrative User Management" #E8DAEF {
+    usecase "UC64: View All Registered Users" as UC64
+    usecase "UC65: Search User Database" as UC65
+    usecase "UC66: View Complete User Profile" as UC66
+    usecase "UC67: Verify User Identity Documents" as UC67
+    usecase "UC68: Deactivate User Account" as UC68
+    usecase "UC69: Reactivate User Account" as UC69
+    usecase "UC70: Access User Booking History" as UC70
+}
+
+'==============================================================================
+' MODULE 12: ADMIN BOOKING MANAGEMENT
+'==============================================================================
+package "Administrative Booking Management" #FADBD8 {
+    usecase "UC71: View All System Bookings" as UC71
+    usecase "UC72: Search Booking Records" as UC72
+    usecase "UC73: Apply Booking Filters\n(Status, Date Range,\nRoom Type, Customer)" as UC73
+    usecase "UC74: Access Complete Booking\nDetails" as UC74
+    usecase "UC75: Execute Administrative\nBooking Cancellation" as UC75
+    usecase "UC76: Modify Existing Booking" as UC76
+}
+
+'==============================================================================
+' MODULE 13: CHECK-IN / CHECK-OUT OPERATIONS
+'==============================================================================
+package "Check-In & Check-Out Operations" #D5F4E6 {
+    usecase "UC77: Display Today's Expected\nArrivals" as UC77
+    usecase "UC78: Display Today's Expected\nDepartures" as UC78
+    usecase "UC79: Verify Guest Identity\nat Front Desk" as UC79
+    usecase "UC80: Execute Guest Check-In\nProcedure" as UC80
+    usecase "UC81: Execute Guest Check-Out\nProcedure" as UC81
+    usecase "UC82: Update Room Occupancy Status\n(Post Check-In/Out)" as UC82
+    usecase "UC83: Calculate Final Billing Charges" as UC83
+    usecase "UC84: Generate Final Invoice\nDocument" as UC84
+}
+
+'==============================================================================
+' MODULE 14: DASHBOARD & ANALYTICS
+'==============================================================================
+package "Administrative Dashboard & Business Analytics" #D1F2EB {
+    usecase "UC85: Access Executive Dashboard" as UC85
+    usecase "UC86: View Revenue Analytics\nand Trends" as UC86
+    usecase "UC87: Monitor Occupancy Rate\nMetrics" as UC87
+    usecase "UC88: Analyze Booking Statistics" as UC88
+    usecase "UC89: Generate Business Reports\n(Revenue, Occupancy,\nPerformance)" as UC89
+    usecase "UC90: Export Reports to File\n(PDF, Excel, CSV)" as UC90
+    usecase "UC91: View Recent System Activities\nand Audit Log" as UC91
+    usecase "UC92: Monitor Real-Time\nOccupancy Status" as UC92
+}
+
+'==============================================================================
+' MODULE 15: NOTIFICATION & EMAIL SYSTEM
+'==============================================================================
+package "Notification & Email Communication System" #FADBD8 {
+    usecase "UC93: Send Booking Confirmation\nEmail" as UC93
+    usecase "UC94: Send Payment Receipt\nEmail" as UC94
+    usecase "UC95: Send Cancellation\nNotification Email" as UC95
+    usecase "UC96: Send Check-In Reminder\nEmail" as UC96
+    usecase "UC97: Send Password Reset\nEmail" as UC97
+    usecase "UC98: Log All Email Activities" as UC98
+}
+
+'==============================================================================
+' MODULE 16: SYSTEM BACKGROUND OPERATIONS
+'==============================================================================
+package "System Background & Automation Operations" #D6DBDF {
+    usecase "UC99: Validate All Input Data\nand Business Rules" as UC99
+    usecase "UC100: Calculate Dynamic Pricing\nwith Seasonal Adjustments" as UC100
+    usecase "UC101: Detect Room Booking\nConflicts" as UC101
+    usecase "UC102: Execute Database\nUpdate Operations" as UC102
+    usecase "UC103: Generate PDF Documents\nand Reports" as UC103
+    usecase "UC104: Execute Database Backup\nand Recovery" as UC104
+    usecase "UC105: Maintain Comprehensive\nAudit Logging" as UC105
+}
+
+'==============================================================================
+' ACTOR-USE CASE RELATIONSHIPS: GUEST USER
+'==============================================================================
+Guest --> UC01 : initiates
+Guest --> UC02 : browses
+Guest --> UC03 : views
+Guest --> UC04 : registers
+Guest --> UC05 : authenticates
+Guest --> UC06 : requests
+
+'==============================================================================
+' ACTOR-USE CASE RELATIONSHIPS: REGISTERED USER
+'==============================================================================
+User --> UC07 : provides credentials
+User --> UC08 : establishes session
+User --> UC09 : terminates session
+User --> UC11 : modifies password
+User --> UC12 : searches
+User --> UC13 : filters
+User --> UC14 : checks availability
+User --> UC15 : views calendar
+User --> UC17 : reviews amenities
+User --> UC18 : adds to cart
+User --> UC19 : views cart
+User --> UC20 : removes items
+User --> UC21 : updates cart
+User --> UC22 : clears cart
+User --> UC24 : proceeds to checkout
+User --> UC25 : enters details
+User --> UC26 : submits requests
+User --> UC27 : applies code
+User --> UC38 : accesses profile
+User --> UC39 : updates profile
+User --> UC40 : uploads documents
+User --> UC41 : modifies contact
+User --> UC44 : views bookings
+User --> UC45 : accesses details
+User --> UC46 : downloads invoice
+User --> UC47 : cancels booking
+User --> UC48 : requests refund
+User --> UC49 : reviews history
+User --> UC50 : writes review
+User --> UC51 : submits rating
+User --> UC52 : edits review
+User --> UC53 : deletes review
+User --> UC54 : browses reviews
+
+'==============================================================================
+' ACTOR-USE CASE RELATIONSHIPS: ADMINISTRATOR
+'==============================================================================
+Admin --> UC56 : manages inventory
+Admin --> UC57 : creates room
+Admin --> UC58 : edits room
+Admin --> UC59 : removes room
+Admin --> UC60 : updates status
+Admin --> UC61 : uploads media
+Admin --> UC62 : configures amenities
+Admin --> UC63 : sets pricing
+Admin --> UC64 : views users
+Admin --> UC65 : searches users
+Admin --> UC66 : accesses user details
+Admin --> UC67 : verifies documents
+Admin --> UC68 : deactivates account
+Admin --> UC69 : activates account
+Admin --> UC70 : reviews user history
+Admin --> UC71 : manages bookings
+Admin --> UC72 : searches bookings
+Admin --> UC73 : applies filters
+Admin --> UC74 : accesses booking details
+Admin --> UC75 : cancels booking
+Admin --> UC76 : modifies booking
+Admin --> UC77 : monitors arrivals
+Admin --> UC78 : monitors departures
+Admin --> UC79 : verifies identity
+Admin --> UC80 : processes check-in
+Admin --> UC81 : processes check-out
+Admin --> UC82 : updates room status
+Admin --> UC83 : calculates charges
+Admin --> UC84 : generates invoice
+Admin --> UC85 : accesses dashboard
+Admin --> UC86 : reviews revenue
+Admin --> UC87 : monitors occupancy
+Admin --> UC88 : analyzes statistics
+Admin --> UC89 : generates reports
+Admin --> UC90 : exports data
+Admin --> UC91 : audits activities
+Admin --> UC92 : monitors real-time
+Admin --> UC55 : moderates reviews
+
+'==============================================================================
+' INCLUDE RELATIONSHIPS (MANDATORY DEPENDENCIES)
+'==============================================================================
+UC05 ..> UC07 : <<include>>
+UC07 ..> UC08 : <<include>>
+UC12 ..> UC14 : <<include>>
+UC12 ..> UC16 : <<include>>
+UC18 ..> UC14 : <<include>>
+UC18 ..> UC16 : <<include>>
+UC19 ..> UC23 : <<include>>
+UC24 ..> UC29 : <<include>>
+UC27 ..> UC28 : <<include>>
+UC29 ..> UC33 : <<include>>
+UC29 ..> UC34 : <<include>>
+UC30 ..> UC31 : <<include>>
+UC32 ..> UC93 : <<include>>
+UC35 ..> UC94 : <<include>>
+UC35 ..> UC36 : <<include>>
+UC40 ..> UC42 : <<include>>
+UC47 ..> UC95 : <<include>>
+UC47 ..> UC37 : <<include>>
+UC80 ..> UC79 : <<include>>
+UC80 ..> UC82 : <<include>>
+UC81 ..> UC82 : <<include>>
+UC81 ..> UC83 : <<include>>
+UC81 ..> UC84 : <<include>>
+UC89 ..> UC90 : <<include>>
+
+'==============================================================================
+' EXTEND RELATIONSHIPS (OPTIONAL ENHANCEMENTS)
+'==============================================================================
+UC12 ..> UC13 : <<extend>>
+UC18 ..> UC21 : <<extend>>
+UC24 ..> UC26 : <<extend>>
+UC24 ..> UC27 : <<extend>>
+UC44 ..> UC47 : <<extend>>
+UC44 ..> UC46 : <<extend>>
+UC44 ..> UC50 : <<extend>>
+UC06 ..> UC10 : <<extend>>
+
+'==============================================================================
+' EXTERNAL SYSTEM INTEGRATIONS
+'==============================================================================
+UC29 --> PaymentGW : integrates with
+UC34 --> PaymentGW : processes via
+UC93 --> EmailSvc : sends through
+UC94 --> EmailSvc : sends through
+UC95 --> EmailSvc : sends through
+UC96 --> EmailSvc : sends through
+UC97 --> EmailSvc : sends through
+
+'==============================================================================
+' BACKGROUND SYSTEM OPERATIONS
+'==============================================================================
+System --> UC93 : triggers
+System --> UC94 : triggers
+System --> UC95 : triggers
+System --> UC96 : triggers
+System --> UC97 : triggers
+System --> UC98 : executes
+System --> UC99 : performs
+System --> UC100 : calculates
+System --> UC101 : validates
+System --> UC102 : executes
+System --> UC103 : generates
+System --> UC104 : performs
+System --> UC105 : maintains
+
+'==============================================================================
+' DATABASE INTERACTIONS
+'==============================================================================
+UC102 --> DB : persists data
+UC104 --> DB : creates backup
+
+'==============================================================================
+' ACTOR INHERITANCE HIERARCHY
+'==============================================================================
+User --|> Guest : extends privileges
+
+'==============================================================================
+' DOCUMENTATION NOTES
+'==============================================================================
+note right of Guest
+  **Guest User Role**
+  ─────────────────────
+  Access Level: Public
+  
+  Capabilities:
+  • Browse public content
+  • View room information
+  • Access system features
+  
+  Restrictions:
+  • Cannot make bookings
+  • Read-only permissions
+  • Must register for transactions
+end note
+
+note right of User
+  **Registered User Role**
+  ─────────────────────
+  Access Level: Authenticated
+  
+  Capabilities:
+  • All Guest privileges
+  • Create bookings
+  • Manage personal profile
+  • Submit reviews
+  • Access booking history
+  • Manage shopping cart
+  
+  Requirements:
+  • Valid email verification
+  • Active account status
+end note
+
+note right of Admin
+  **Administrator Role**
+  ─────────────────────
+  Access Level: Full System Control
+  
+  Capabilities:
+  • Complete system management
+  • User account administration
+  • Room inventory control
+  • Booking management
+  • Check-in/Check-out operations
+  • Business analytics access
+  • Report generation
+  • Document verification
+  • System configuration
+end note
+
+note bottom of System
+  **Background System**
+  ─────────────────────
+  Function: Automation & Support
+  
+  Responsibilities:
+  • Automated task execution
+  • Data validation
+  • Business rule enforcement
+  • Audit trail maintenance
+  • Scheduled operations
+  • System monitoring
+  
+  Integration:
+  • Database management
+  • External service coordination
+  • Email service integration
+end note
+
+note top of PaymentGW
+  **External Integration**
+  ─────────────────────
+  Service: Payment Gateway API
+  
+  Functions:
+  • Card validation
+  • Transaction processing
+  • Payment authorization
+  • Refund handling
+  • Security compliance (PCI-DSS)
+end note
+
+note top of EmailSvc
+  **External Integration**
+  ─────────────────────
+  Service: SMTP Email Service
+  
+  Functions:
+  • Transactional emails
+  • Notification delivery
+  • Template management
+  • Delivery tracking
+end note
+
+note top of DB
+  **Data Layer**
+  ─────────────────────
+  Infrastructure: Database Server
+  
+  Functions:
+  • Persistent data storage
+  • Transaction management
+  • Data integrity
+  • Backup and recovery
+  • Query optimization
+end note
+
+legend right
+  |= Symbol |= Meaning |
+  | ──> | Actor initiates Use Case |
+  | ..> <<include>> | Mandatory dependency |
+  | ..> <<extend>> | Optional extension |
+  | --|> | Inheritance relationship |
+  
+  **Diagram Coverage:** 105 Use Cases
+  **Last Updated:** December 19, 2025
+  **Solivie Dev Team**
+endlegend
+
+footer Solivie Hotel Management System | Development Team: Muhammed Fathi Kamal, Mohamed Elsayed Abdelaziz, Salma Abdelhamid Ahmed, Dai Ehab Mohamed Reda, Shaza Mohammed El Said | © 2025
+
+@enduml
